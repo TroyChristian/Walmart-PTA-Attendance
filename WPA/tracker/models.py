@@ -15,7 +15,7 @@ class Project(models.Model):
 		('CANCELLED', 'Cancelled')
 	]
 	status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='ACTIVE')
-	associates = models.ManyToManyField('Associate', related_name='projects')
+	associates = models.ManyToManyField('Associate', related_name='projects', blank=True, null=True)
 	authorized_users = models.ManyToManyField(User, related_name='authorized_projects')
 	created_by = models.ForeignKey(
 		User,
@@ -25,7 +25,7 @@ class Project(models.Model):
 	created_at = models.DateTimeField(auto_now_add=True)
 
 	def __str__(self):
-		return f"Project Store #{self.project_number} - {self.address}" 
+		return f"Project Store #{self.store_number} - {self.address}" 
 
 
 	#Consider junction table for unique together (store_number, status=ACTIVE)
@@ -71,7 +71,7 @@ class ShiftTime(models.Model):
 class Team(models.Model):
 	team_name = models.CharField(max_length=100)
 	project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='teams')
-	shift_time = models.ManyToManyField(ShiftTime)
+	shift_time = models.ManyToManyField(ShiftTime, related_name='shift_times')
 	associates = models.ForeignKey(Associate, on_delete=models.PROTECT, related_name='team'
 	)
 
@@ -152,7 +152,9 @@ class AttendanceEventLegend(models.Model):
 			cls.objects.get_or_create(
 				code=code,
 				defaults={'description': desc, 'point_value': points}
-			)
+			) 
+
+#TODO# Unique Together AttendanceEventLegend, Project
 
 class AttendanceEvent(models.Model):
 	event = models.ForeignKey(
