@@ -36,21 +36,56 @@ class Certification(models.Model):
 	def __str__(self):
 		return self.name 
 
+from django.db import models
+
 class ShiftTime(models.Model):
-	start_time = models.TimeField()
-	end_time = models.TimeField()
-	
+	# Define available time choices (12-hour format with AM/PM)
+	TIME_CHOICES = [
+		(f"{hour}:{minute:02}{period}", f"{hour}:{minute:02}{period}")
+		for hour in range(1, 13)  # 1-12 hours
+		for minute in [0, 15, 30, 45]  # Minutes: 00, 15, 30, 45
+		for period in ['AM', 'PM']
+	]
+
+	start_time = models.CharField(
+		max_length=7, 
+		choices=TIME_CHOICES, 
+		default="09:00AM"
+	)
+	end_time = models.CharField(
+		max_length=7, 
+		choices=TIME_CHOICES, 
+		default="05:00PM"
+	)
+
 	def __str__(self):
-		return f"{self.format_time(self.start_time)} - {self.format_time(self.end_time)}"
-	
+		"""Return the start and end times in a user-friendly format."""
+		return f"{self.start_time} - {self.end_time}"
+
 	@staticmethod
-	def format_time(t):
-		"""Convert time to 12-hour format with AM/PM"""
-		return t.strftime("%I:%M%p").lstrip("0").lower()
-	
+	def format_time(time_str):
+		"""Convert time to 12-hour format with AM/PM."""
+		return time_str.lower()
+
 	def is_earlier_than(self, other_shift):
-		"""Compare if this shift starts earlier than another shift"""
-		return self.start_time < other_shift.start_time
+		"""Compare if this shift starts earlier than another shift."""
+		start_time = self.convert_to_minutes(self.start_time)
+		other_start_time = self.convert_to_minutes(other_shift.start_time)
+		return start_time < other_start_time
+
+	@staticmethod
+	def convert_to_minutes(time_str):
+		"""Convert a time in 'HH:MMAM/PM' format to minutes since midnight."""
+		hour = int(time_str[:2]) % 12  # Convert to 24-hour format
+		minute = int(time_str[3:5])
+		period = time_str[5:7]  # AM or PM
+
+		if period == "PM" and hour != 12:
+			hour += 12
+		elif period == "AM" and hour == 12:
+			hour = 0  # Midnight case
+
+		return hour * 60 + minute
 
 
 class Team(models.Model):
@@ -85,6 +120,7 @@ class Associate(models.Model):
 		blank=True,
 		related_name='associates'  # Allows reverse access from Team to Associates
 	)
+	shift_time = models.ForeignKey(ShiftTime, on_delete=models.SET_NULL, related_name='shift_time', null=True, blank=True)
 
 	def __str__(self):
 		return self.name
