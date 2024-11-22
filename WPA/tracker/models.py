@@ -34,23 +34,7 @@ class Certification(models.Model):
 	description = models.TextField(null=True, blank=True)
 	
 	def __str__(self):
-		return self.name
-
-class Associate(models.Model):
-	name = models.CharField(max_length=100)
-	points = models.IntegerField(default=0) #save points as a value on the class so we are not calling calculate_attendance_points every time we need to display an associates points.
-	deducted_points = models.IntegerField(default=0) #track how many points have been decucted by management so we can subtract this amount from the result of calculate_attendance_points
-	certifications = models.ManyToManyField(Certification, related_name='associates')
-
-	def __str__(self):
-		return self.name
-
-
-	def calculate_attendance_points(self):
-		"""Calculate total attendance points for the associate"""
-		return self.attendance_events.aggregate(
-			total_points=models.Sum('point_value')
-		)['total_points'] or 0
+		return self.name 
 
 class ShiftTime(models.Model):
 	start_time = models.TimeField()
@@ -68,15 +52,52 @@ class ShiftTime(models.Model):
 		"""Compare if this shift starts earlier than another shift"""
 		return self.start_time < other_shift.start_time
 
+
 class Team(models.Model):
 	team_name = models.CharField(max_length=100)
-	project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='teams')
+	project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='teams',)
 	shift_time = models.ManyToManyField(ShiftTime, related_name='shift_times')
-	associates = models.ForeignKey(Associate, on_delete=models.PROTECT, related_name='team'
-	)
+	#associates = models.ForeignKey(Associate, on_delete=models.PROTECT, related_name='team')
 
 	def __str__(self):
 		return f"{self.team_name}"
+
+
+
+
+class Associate(models.Model):
+	name = models.CharField(max_length=100)
+	points = models.DecimalField(
+		max_digits=3,
+		decimal_places=1,
+		default=0
+	) #save points as a value on the class so we are not calling calculate_attendance_points every time we need to display an associates points.
+	deducted_points = models.DecimalField(
+		max_digits=3,
+		decimal_places=1,
+		default=0
+	)#track how many points have been decucted by management so we can subtract this amount from the result of calculate_attendance_points
+	certifications = models.ManyToManyField(Certification, related_name='associates', null=True, blank=True) 
+	team = models.ForeignKey(
+		Team, 
+		on_delete=models.PROTECT,  # Protect the team from deletion if it has associates
+		null=True,
+		blank=True,
+		related_name='associates'  # Allows reverse access from Team to Associates
+	)
+
+	def __str__(self):
+		return self.name
+
+
+	def calculate_attendance_points(self):
+		"""Calculate total attendance points for the associate"""
+		return self.attendance_events.aggregate(
+			total_points=models.Sum('point_value')
+		)['total_points'] or 0
+
+
+
 
 
 
@@ -93,17 +114,23 @@ class BaseComment(models.Model):
 	associate = models.ForeignKey(Associate, on_delete=models.CASCADE)
 	witnessed_by = models.ManyToManyField(
 		User,
-		related_name='%(class)s_witnessed'
+		related_name='%(class)s_witnessed', 
+		null = True, 
+		blank = True
 	)
 	alerted_users = models.ManyToManyField(
 		User,
-		related_name='%(class)s_alerts'
+		related_name='%(class)s_alerts',
+		null = True, 
+		blank = True
 	)
 	created_at = models.DateTimeField(auto_now_add=True)
 	created_by = models.ForeignKey(
 		User,
 		on_delete=models.PROTECT,
-		related_name='%(class)s_created'
+		related_name='%(class)s_created',
+		null = True, 
+		blank = True
 	)
 	
 	class Meta:
@@ -178,7 +205,8 @@ class AttendanceEvent(models.Model):
 		User,
 		on_delete=models.PROTECT,
 		related_name='updated_attendance_events',
-		null=True
+		null=True,
+		blank=True
 	)
 
 	@property
