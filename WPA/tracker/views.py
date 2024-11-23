@@ -6,7 +6,7 @@ from django.utils.safestring import mark_safe
 from .models import AttendanceEvent 
 
 #utils 
-from .utils.calendar_util import Calendar
+
 # Create your views here.
 
 
@@ -91,21 +91,7 @@ class CalendarView(generic.ListView):
 
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs) 
-		current_day = datetime.now().day
-		current_month = datetime.now().month
-		current_year = datetime.now().year
-		
-		# Initialize the Calendar class from the calendar module
-		cal = Calendar()
-		
-		# Generate the HTML for the current month and year
-		html_cal = cal.formatmonth(current_year, current_month, withyear=True)
-		
-		# Add the calendar to the context
-		context['calendar'] = mark_safe(html_cal)
-		
-		# Optional: Add logic for 'next_month' if needed
-		# context['next_month'] = next_month_logic_here
+
 		
 		return context
 
