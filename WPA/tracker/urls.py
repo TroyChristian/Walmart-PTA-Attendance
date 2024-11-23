@@ -17,6 +17,10 @@ path('tracker/<uuid:tracker_pk>/associate/<int:associate_pk>/attendance', views.
 path('tracker/<uuid:tracker_pk>/<uuid:group_pk>/headcount', views.group_headcount_view, name="group_headcount"),
 path('tracker/<uuid:tracker_pk>/headcount', views.project_headcount_view, name="project_headcount"),
 
+## Test routes for developing the calendar views ## 
+path('calendar', views.CalendarView.as_view(), name="calendar"),
+
+
 
 
 

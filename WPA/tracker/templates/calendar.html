@@ -1,0 +1,42 @@
+{% load static %}
+{% load webpack_loader %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Calendar</title>
+
+    <!-- VanillaCalendarPro CSS -->
+    <link rel="stylesheet" href="{% static 'css/vanilla_calendar_pro/vanilla_calendar_pro.css' %}" />
+    
+    <!-- VanillaCalendarPro JS -->
+    <script src="{% static 'js/vanilla_calendar_pro.js' %}"></script>
+    
+    <style>
+        #calendar {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="calendar"></div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const calendar = new VanillaCalendar('#calendar', {
+                // Add your calendar configuration here
+                type: 'default',
+                settings: {
+                    selection: {
+                        day: 'single'
+                    }
+                }
+            });
+            calendar.init();
+        });
+    </script>
+    
+
+</body>
+</html>

@@ -1,4 +1,11 @@
 from django.shortcuts import render
+from django.http import JsonResponse, HttpResponse
+from datetime import datetime, date
+from django.views import generic
+from django.utils.safestring import mark_safe
+from .models import AttendanceEvent 
+
+#utils 
 
 # Create your views here.
 
@@ -70,4 +77,21 @@ def group_headcount_view(request):
 def project_headcount_view(request): 
 	#wireframe 11
 	if request.method == "GET":
-		return render(request, 'project_headcount_view.html')
+		return render(request, 'project_headcount_view.html') 
+
+
+#test views for developing calendar
+
+
+
+class CalendarView(generic.ListView):
+	model = AttendanceEvent
+	template_name = 'calendar.html' 
+	
+
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs) 
+
+		
+		return context
+
