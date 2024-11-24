@@ -7,6 +7,7 @@
 
     <!-- VanillaCalendarPro CSS -->
     <link rel="stylesheet" href="{% static 'css/vanilla_calendar_pro/vanilla_calendar_pro.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/calendar.css' %}" />
     
     <!-- VanillaCalendarPro JS -->
     <script src="{% static 'js/vanilla_calendar_pro.js' %}"></script>
@@ -22,21 +23,49 @@
 <body>
     <div id="calendar"></div>
     
-    <script>
+<script>
         document.addEventListener('DOMContentLoaded', () => {
-            const calendar = new VanillaCalendar('#calendar', {
-                // Add your calendar configuration here
+            // Extract events from the Django context
+            const events = {{ events|safe }}; // The event data passed from the view
+
+            // Define the options for the calendar
+            const options = {
+                styles: {
+                    arrowPrev: 'arrow-smile',
+                },
                 type: 'default',
                 settings: {
                     selection: {
                         day: 'single'
                     }
-                }
-            });
+                },
+                popups: events.reduce((acc, event) => {
+                    acc[event.date] = {
+                        modifier: `bg-${event.color.replace('#', '')}` // Pass color for event
+                    };
+                    return acc;
+                }, {}),
+            };
+
+            // Initialize the VanillaCalendar
+            const calendar = new VanillaCalendar('#calendar', options);
+
+            // Initialize the calendar
             calendar.init();
+
+            // Event listener to add 'active' class to clicked day
+            const calendarDays = document.querySelectorAll('.days li');
+            calendarDays.forEach(day => {
+                day.addEventListener('click', function() {
+                    // Remove 'active' class from all days
+                    calendarDays.forEach(d => d.classList.remove('active'));
+
+                    // Add 'active' class to the clicked day
+                    this.classList.add('active');
+                });
+            });
         });
-    </script>
-    
+</script>
 
 </body>
 </html>

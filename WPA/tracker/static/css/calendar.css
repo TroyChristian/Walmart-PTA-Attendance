@@ -1,4 +1,15 @@
     #calendar {
         max-width: 100%;
         margin: 0 auto;
-    }
+    } 
+
+.bg-00FF00 {
+  background-color: #00FF00;
+}
+.bg-FF5733 {
+  background-color: #FF5733;
+} 
+
+.days li.active::before {
+	background:green;
+}

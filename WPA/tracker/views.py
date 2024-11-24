@@ -91,7 +91,23 @@ class CalendarView(generic.ListView):
 
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs) 
+		events = AttendanceEvent.objects.filter(associate=4)  # hard code associate pk for test.
 
-		
+		# Prepare events data in a format suitable for VanillaCalendarPro
+		events_data = [
+			{
+				'date': event.created_at.strftime('%Y-%m-%d'),  # Format the date as string
+				'color': '#00FF00'  # Pass the color for the event. Hardcode green for test.
+			}
+			for event in events
+		]
+
+		print(events_data)  # Add this line to print the events data for debugging
+
+		# Pass the events data to the template context
+		context['events'] = events_data
+
 		return context
+			
+
 
