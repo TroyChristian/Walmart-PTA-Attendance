@@ -86,7 +86,7 @@ def project_headcount_view(request):
 
 class CalendarView(generic.ListView):
 	model = AttendanceEvent
-	template_name = 'calendar.html' 
+	template_name = 'vanilla_calendar.html' 
 	
 
 	def get_context_data(self, **kwargs):
