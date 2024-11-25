@@ -95,11 +95,46 @@ class Team(models.Model):
 	#associates = models.ForeignKey(Associate, on_delete=models.PROTECT, related_name='team')
 
 	def __str__(self):
-		return f"{self.team_name}"
+		return f"{self.team_name}" 
 
+class AttendanceEventLegend(models.Model):
+	code = models.CharField(max_length=4, unique=True)
+	description = models.CharField(max_length=50)
+	point_value = models.DecimalField(
+		max_digits=3,
+		decimal_places=1,
+		default=0
+	)
+	
+	class Meta:
+		ordering = ['code']
+	
+	def __str__(self):
+		return f"{self.code}: {self.description} ({self.point_value} points)"
 
+	@classmethod
+	def create_defaults(cls):
+		"""Create default attendance event types"""
+		defaults = [
+			('W', 'Worked', 0),
+			('PTO', 'PTO', 0),
+			('PPTO', 'PPTO', 0),
+			('LOA', 'LOA', 0),
+			('OFF', 'Off', 0),
+			('EI', 'Early In', 0.5),
+			('EO', 'Early Out', 0.5),
+			('IS', 'Incomplete Shift', 1),
+			('A', 'Absent', 1),
+			('NC', 'No Call/No Show', 3),
+			('KD', 'Key Date Event', 2),
+		]
+		for code, desc, points in defaults:
+			cls.objects.get_or_create(
+				code=code,
+				defaults={'description': desc, 'point_value': points}
+			) 
 
-
+#TODO# Unique Together AttendanceEventLegend, Project 
 class Associate(models.Model):
 	name = models.CharField(max_length=100)
 	points = models.DecimalField(
@@ -131,6 +166,47 @@ class Associate(models.Model):
 		return self.attendance_events.aggregate(
 			total_points=models.Sum('point_value')
 		)['total_points'] or 0
+
+	def get_associate_earliest_event(self):
+		attendance_events = AttendanceEvent.objects.filter(associate=self.pk) 
+		return attendance_events.order_by('created_at').first() 
+
+
+class AttendanceEvent(models.Model):
+	event = models.ForeignKey(
+		AttendanceEventLegend,
+		on_delete=models.PROTECT,
+		related_name='attendance_events'
+	)
+	associate = models.ForeignKey(
+		Associate,
+		on_delete=models.CASCADE,
+		related_name='attendance_events'
+	)
+	created_by = models.ForeignKey(
+		User,
+		on_delete=models.PROTECT,
+		related_name='created_attendance_events'
+	)
+	created_at = models.DateTimeField(auto_now_add=True)
+	updated_at = models.DateTimeField(auto_now=True)
+	updated_by = models.ForeignKey(
+		User,
+		on_delete=models.PROTECT,
+		related_name='updated_attendance_events',
+		null=True,
+		blank=True
+	)
+
+	@property
+	def point_value(self):
+		"""Get point value from the associated legend entry"""
+		return self.event.point_value
+
+	def __str__(self):
+		return f"{self.associate.name} - {self.event.code} on {self.created_at.date()}"
+
+
 
 
 
@@ -180,78 +256,9 @@ class DisciplinaryAction(BaseComment):
 	def __str__(self):
 		return f"Disciplinary Action for {self.associate.name} - {self.created_at}"
 
-class AttendanceEventLegend(models.Model):
-	code = models.CharField(max_length=4, unique=True)
-	description = models.CharField(max_length=50)
-	point_value = models.DecimalField(
-		max_digits=3,
-		decimal_places=1,
-		default=0
-	)
-	
-	class Meta:
-		ordering = ['code']
-	
-	def __str__(self):
-		return f"{self.code}: {self.description} ({self.point_value} points)"
 
-	@classmethod
-	def create_defaults(cls):
-		"""Create default attendance event types"""
-		defaults = [
-			('W', 'Worked', 0),
-			('PTO', 'PTO', 0),
-			('PPTO', 'PPTO', 0),
-			('LOA', 'LOA', 0),
-			('OFF', 'Off', 0),
-			('EI', 'Early In', 0.5),
-			('EO', 'Early Out', 0.5),
-			('IS', 'Incomplete Shift', 1),
-			('A', 'Absent', 1),
-			('NC', 'No Call/No Show', 3),
-			('KD', 'Key Date Event', 2),
-		]
-		for code, desc, points in defaults:
-			cls.objects.get_or_create(
-				code=code,
-				defaults={'description': desc, 'point_value': points}
-			) 
 
-#TODO# Unique Together AttendanceEventLegend, Project
 
-class AttendanceEvent(models.Model):
-	event = models.ForeignKey(
-		AttendanceEventLegend,
-		on_delete=models.PROTECT,
-		related_name='attendance_events'
-	)
-	associate = models.ForeignKey(
-		Associate,
-		on_delete=models.CASCADE,
-		related_name='attendance_events'
-	)
-	created_by = models.ForeignKey(
-		User,
-		on_delete=models.PROTECT,
-		related_name='created_attendance_events'
-	)
-	created_at = models.DateTimeField(auto_now_add=True)
-	updated_at = models.DateTimeField(auto_now=True)
-	updated_by = models.ForeignKey(
-		User,
-		on_delete=models.PROTECT,
-		related_name='updated_attendance_events',
-		null=True,
-		blank=True
-	)
-
-	@property
-	def point_value(self):
-		"""Get point value from the associated legend entry"""
-		return self.event.point_value
-
-	def __str__(self):
-		return f"{self.associate.name} - {self.event.code} on {self.created_at.date()}"
 
 class Alert(models.Model):
 	content_type = models.ForeignKey('contenttypes.ContentType', on_delete=models.CASCADE)
