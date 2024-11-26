@@ -4,6 +4,30 @@
 import datetime
 # Constants
 
+class NoDuplicateList:
+	def __init__(self):
+		self.items = [] 
+
+	def add(self, item):
+		if item not in self.items:
+			self.items.append(item)
+
+	def remove(self, item):
+		if item in self.items:
+			self.items.remove(item)
+
+	def __contains__(self, item):
+		return item in self.items 
+
+	def __iter__(self):
+		return iter(self.items) 
+
+	def __len__(self):
+		return len(self.items)
+
+	def __str__(self):
+		return f"NoDuplicateList({self.items})"
+
 
 
 walmart_fiscal_weeks = {
@@ -133,7 +157,26 @@ def get_days_in_walmart_fiscal_week(fiscal_week_str: str):
 
 
 
+def weeks_to_populate(events) -> [int]:
+	weeks = []
+	for event in events:
+		week = get_walmart_fiscal_year_and_week(event.created_at)
+		if len(week) == 6: #If a 6 character year/week combo is found in the dictionary
+			weeks.append(week) 
+	return weeks #this count is how many 7 day div rows we are going to populate the template with.
 
+
+def days_to_populate(fiscal_week_numbers) -> [str]: #fiscal_week_numbers:(NoDuplicateList:str)
+	days_array = [] 
+	days_array_formatted = []
+	for week in fiscal_week_numbers:
+		days = get_days_in_walmart_fiscal_week(week)
+		for day in days:
+			days_array.append(day) #datetime object to remap events with the day
+			days_array_formatted.append(format_date(day)) #formatted days to display
+	return (days_array_formatted, days_array)
+
+	
 
 
 

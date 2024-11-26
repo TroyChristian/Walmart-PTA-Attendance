@@ -113,18 +113,15 @@ class CalendarView(generic.ListView):
 def calendar(request):
 	if request.method == "GET":
 		associate = Associate.objects.filter(pk=4).first()  # hard code associate pk for test. 
-		events = AttendanceEvent.objects.filter(associate=associate)
-		first_event = associate.get_associate_earliest_event() #have to account for if there is no first event in real view.
+		events = AttendanceEvent.objects.filter(associate=associate).order_by("created_at") #oldest attendance events first
 
-		date_earliest_event = first_event.created_at.date()
-		today_date = datetime.now().date()
-
-		current_walmart_week = du.get_walmart_fiscal_year_and_week(today_date, week_only=True)
-		first_event_walmart_week = du.get_walmart_fiscal_year_and_week(date_earliest_event, week_only=True)
-
-		weeks_to_populate = [x for x in range(int(first_event_walmart_week), int(current_walmart_week) + 1)]
 		
-		context = {'associate':associate, 'events':events, 'date_earliest_event':date_earliest_event, 'today_date':today_date, 'current_walmart_week':current_walmart_week, 'first_event_walmart_week':first_event_walmart_week, 'weeks_to_populate':weeks_to_populate}
+		weeks_to_populate = du.weeks_to_populate(events) 
+		days_raw, days_formatted = du.days_to_populate(weeks_to_populate) #([datetime], [str])
+
+		
+		
+		context = {'associate':associate, 'events':events, 'weeks_to_populate':weeks_to_populate}
 
 		
 		return render(request, 'calendar.html', context) 
