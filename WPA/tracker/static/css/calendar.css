@@ -1,21 +1,23 @@
-/* Container for the flexbox */
-.flex-container {
-    display: flex;
-    justify-content: space-between;  /* Ensures the items have equal space between them */
-    gap: 2px;  /* Adds a gap between the items */
+/* Flexbox container for each week */
+.week-container {
+  margin-bottom: 20px;
 }
 
-/* Flex item styling */
+.flex-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
 
 .flex-item {
-    width: 125px;   /* Set the width to 50px */
-    height: 125px;  /* Set the height to 50px to make it a square */
-    padding: 10px; /* Optional: Add padding if you want to add some space inside the square */
-    text-align: center;
-    background-color: lightgray;
-    border: 1px solid #ccc;
-    display: flex;
-    justify-content: center; /* Centers the content horizontally */
-    align-items: center;     /* Centers the content vertically */
+  flex: 1 1 100px; /* Flex-grow, flex-shrink, and flex-basis */
+  margin: 5px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: center;
 }
+
+strong {
+  font-size: 18px;
+  margin-bottom: 10px;
 }

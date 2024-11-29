@@ -1,5 +1,5 @@
 {% load static %}
-
+{% load custom_filters %}
 
   <head>
     <meta charset="UTF-8" />
@@ -15,26 +15,34 @@
     <title> View Associate Attendance </title>
   </head>
 
-
 <body>
-
-	<body>
-	{% if weeks_to_populate %}
-	{% for week in weeks_to_populate %}
-	Week #{{week}}
-    <div class="flex-container">
-        <div class="flex-item">Saturday | </div>
-        <div class="flex-item">Item 2</div>
-        <div class="flex-item">Item 3</div>
-        <div class="flex-item">Item 4</div>
-        <div class="flex-item">Item 5</div>
-        <div class="flex-item">Item 6</div>
-        <div class="flex-item">Item 7</div>
-    </div>
-    {% endfor %} 
-    {% else %} 
+  {% if weeks_to_populate %}
+    {% for week_key in fiscal_week_dict.keys %}
+      <!-- Week Key displayed at the top of each row -->
+      <div class="week-container">
+        <strong>Week #{{ week_key }}</strong>
+        <div class="flex-container">
+          <!-- Use the dict filter to access the corresponding FiscalWeek instance -->
+          {% with fiscal_week=fiscal_week_dict|get_item:week_key %}
+            <!-- Iterate over the days of the FiscalWeek (day_data_array) -->
+            {% for wdd in fiscal_week.day_data_array %}
+              <div class="flex-item">
+                Day of Week | {{ wdd.day_formatted }}
+                {% if wdd.event %}
+                  <!-- Display the event if it exists -->
+                  {{ wdd.event }}
+                {% endif %}
+              </div>
+            {% endfor %}
+          {% endwith %}
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
     No Weeks To Populate!
-    {% endif %}
-
+  {% endif %}
 </body>
+
+
+
 </html>

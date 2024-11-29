@@ -1,32 +1,10 @@
 """Functions and classes for testing and development """ 
 
-
+import time
 import datetime
+from collections import namedtuple
 # Constants
 
-class NoDuplicateList:
-	def __init__(self):
-		self.items = [] 
-
-	def add(self, item):
-		if item not in self.items:
-			self.items.append(item)
-
-	def remove(self, item):
-		if item in self.items:
-			self.items.remove(item)
-
-	def __contains__(self, item):
-		return item in self.items 
-
-	def __iter__(self):
-		return iter(self.items) 
-
-	def __len__(self):
-		return len(self.items)
-
-	def __str__(self):
-		return f"NoDuplicateList({self.items})"
 
 
 
@@ -100,20 +78,7 @@ walmart_fiscal_weeks = {
 	}
 } 
 
-def format_date(event_created_at) -> str:
-	#event_date = str(event_created_at.date()) #'2024-11-25', '02-02-2025'
-	formatted_date = event_created_at.strftime('%m-%d-%Y')
-	return formatted_date
-
-
-
-def format_datetime_array(datetime_array) -> [str]:
-	formatted_dates = [] 
-	for date in datetime_array:
-		formatted_dates.append(format_date(date))
-	return formatted_dates 
-
-
+WeekDayData = namedtuple('WeekDayData', ['week', 'day_raw', 'day_formatted', 'event']) 
 
 def get_walmart_fiscal_year_and_week(date, week_only=False) -> str:
 	"""
@@ -139,6 +104,122 @@ def get_walmart_fiscal_year_and_week(date, week_only=False) -> str:
 		return str(fiscal_week)
 	else:
 		return f"{fiscal_year}{fiscal_week:02d}"
+
+
+class FiscalWeekDayData:
+	def __init__(self, week=None, day_raw=None, day_formatted=None, event=None):
+		self.week = week #fiscal week
+		self.day_raw =day_raw #datetime to map to event
+		self.day_formatted = day_formatted #formatted day for display 
+		self.event = event #stores AttendanceEvent
+	
+	def __str__(self): 
+		return f"FiscalWeekDayData: week:{self.week} day:{self.day_formatted} event: {self.event}"
+
+	def __repr__(self): 
+		return f"FiscalWeekDayData: week:{self.week} day:{self.day_formatted} event: {self.event}"
+
+	def associate_day_with_event(self, events):
+		"""Check if an AttendanceEvent exists for a specific day."""
+		for event in events:
+			if event.created_at.date() == self.day_raw:  # Compare only the date part
+				self.event = event
+				break 
+		return None  # No event found for this day 
+
+	def set_week(self):
+		self.week = get_walmart_fiscal_year_and_week(self.day_raw) 
+
+	def __eq__(self, other):
+		"""Custom equality check for FiscalWeekDayData."""
+		if isinstance(other, FiscalWeekDayData):
+			return (self.week == other.week and
+					self.day_raw == other.day_raw and
+					self.day_formatted == other.day_formatted)  # Compare relevant fields
+		return False
+
+	def __hash__(self):
+		"""Override hash to match equality check."""
+		return hash((self.week, self.day_raw, self.day_formatted))  # Based on fields that define equality
+
+	def associate_day_with_event(self, events):
+		"""Check if an AttendanceEvent exists for a specific day."""
+		for event in events:
+			if event.created_at.date() == self.day_raw:  # Compare only the date part
+				self.event = event
+				break
+		return None  # No event found for this day
+
+
+
+
+class FiscalWeek:
+	def __init__(self, week=None, day_data_array=None): 
+		self.week = week 
+		self.day_data_array = day_data_array
+	def __str__(self): 
+		return f"FiscalWeek: week {self.week} day_data_array: {len(self.day_data_array)} FWDD objects in array"
+
+	def __repr__(self): 
+		return f"FiscalWeek: week {self.week} day_data_array: {len(self.day_data_array)} FWDD objects in array"
+	
+
+
+
+def create_fiscal_week_objects(fiscal_week_day_data_array): #Take in an array of FiscalWeekDayData whose event attribute is already set. This function groups FWDD objects into the days attribute of the FiscalWeek class so that evreything can be iterated over neatly in the template. 
+	fiscal_week_dict = {} #The FWDD's week attr {wdd.week:FiscalWeek} There are 14 elements in fiscal_week_day_data_array
+	#Create 6 digit week codes has dictionary key. 
+	for wdd in fiscal_week_day_data_array:
+		if wdd.week not in fiscal_week_dict:
+			fiscal_week_dict[wdd.week] = FiscalWeek(week=wdd.week)
+		else: 
+			continue 
+	for k in fiscal_week_dict.keys():
+		days_array = []
+		for wdd in fiscal_week_day_data_array:
+			if wdd.week == k:
+				days_array.append(wdd)
+		print(days_array)
+		fiscal_week_dict[k].day_data_array = days_array 
+		print(fiscal_week_dict[k]) 
+	return fiscal_week_dict
+
+	
+
+
+
+
+
+
+
+
+def zip_weeks_days_data(weeks_to_populate, days_raw, days_formatted, event_placeholders):
+	
+	merged_list = [WeekDayData(week, day_raw, day_formatted, event_placeholders)
+				   for week, day_raw, day_formatted, placeholder in zip(weeks_to_populate, days_raw, days_formatted, event_placeholders)]
+	return merged_list 
+
+def create_fiscal_week_day_data_objects(weeks_to_populate, days_raw, days_formatted):
+	week_day_data_objects_list = [FiscalWeekDayData(week, day_raw, day_formatted)
+				   for week, day_raw, day_formatted in zip(weeks_to_populate, days_raw, days_formatted)]
+	return week_day_data_objects_list
+
+def format_date(event_created_at) -> str:
+	#event_date = str(event_created_at.date()) #'2024-11-25', '02-02-2025'
+	formatted_date = event_created_at.strftime('%m-%d-%Y')
+	return formatted_date
+
+
+
+def format_datetime_array(datetime_array) -> [str]:
+	formatted_dates = [] 
+	for date in datetime_array:
+		formatted_dates.append(format_date(date))
+	return formatted_dates 
+
+
+
+
 
 # function 2: get_days_in_walmart_fiscal_week
 def get_days_in_walmart_fiscal_week(fiscal_week_str: str):
@@ -166,7 +247,7 @@ def weeks_to_populate(events) -> [int]:
 	return weeks #this count is how many 7 day div rows we are going to populate the template with.
 
 
-def days_to_populate(fiscal_week_numbers) -> [str]: #fiscal_week_numbers:(NoDuplicateList:str)
+def days_to_populate(fiscal_week_numbers) -> [str]: #[str])
 	days_array = [] 
 	days_array_formatted = []
 	for week in fiscal_week_numbers:
@@ -190,6 +271,7 @@ def get_attendance_event_year_week_walmart_fiscal_calendar(event, week_only=Fals
 
 
 
+# New Approach
 
 
 
