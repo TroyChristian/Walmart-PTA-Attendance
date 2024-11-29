@@ -1,0 +1,10 @@
+.user-icons img {
+    position: relative;
+    margin-left: -30px; /* Adjust overlap */
+    border: 2px solid white; 
+    z-index: 1;
+}
+
+.user-icons img:first-child {
+    margin-left: 0;
+}

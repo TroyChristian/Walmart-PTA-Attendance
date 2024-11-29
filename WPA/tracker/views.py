@@ -71,3 +71,7 @@ def project_headcount_view(request):
 	#wireframe 11
 	if request.method == "GET":
 		return render(request, 'project_headcount_view.html')
+
+def baseTwo(request):
+	if request.method == "GET":
+		return render(request, "baseTwo.html")
