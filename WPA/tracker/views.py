@@ -3,9 +3,10 @@ from django.http import JsonResponse, HttpResponse
 from datetime import datetime, date
 from django.views import generic
 from django.utils.safestring import mark_safe
-from .models import AttendanceEvent 
+from .models import AttendanceEvent, Associate
 
 #utils 
+from tracker.utils import fiscal_calendar_utils as du 
 
 # Create your views here.
 
@@ -107,7 +108,40 @@ class CalendarView(generic.ListView):
 		# Pass the events data to the template context
 		context['events'] = events_data
 
-		return context
-			
+		return context 
+
+def calendar(request):
+	if request.method == "GET":
+		associate = Associate.objects.filter(pk=4).first()  # hard code associate pk for test. 
+		events = AttendanceEvent.objects.filter(associate=associate).order_by("created_at") #oldest attendance events first
+
+		
+		weeks_to_populate = du.weeks_to_populate(events) 
+		days_formatted, days_raw = du.days_to_populate(weeks_to_populate) #([datetime], [str])
+	   # Create FiscalWeekDayData objects
+		week_day_data_objects_list = []
+		
+		for day_raw, day_formatted in zip(days_raw, days_formatted):
+			# Create the FiscalWeekDayData object and append to the list
+			week_day_data = du.FiscalWeekDayData(day_raw=day_raw, day_formatted=day_formatted) 
+			week_day_data_objects_list.append(week_day_data)
+
+		for wdd_instance in week_day_data_objects_list:
+			wdd_instance.associate_day_with_event(events)
+
+		for wdd_instance in week_day_data_objects_list:
+			wdd_instance.set_week()
+
+
+		#Initialize FiscalWeek classes. Create a dict of FiscalWeeks. Loop through wdd_instances. If its week is not represented by  a FiscalWeek class, create one, add all wdd_instances with the week to its FiscalWeek class.
+		fiscal_week_dict = du.create_fiscal_week_objects(week_day_data_objects_list) 
+
+
+		
+
+		# Add to context
+		context = {'associate': associate, 'weeks_to_populate':weeks_to_populate, 'fiscal_week_dict':fiscal_week_dict}
+		
+		return render(request, 'calendar.html', context)
 
 

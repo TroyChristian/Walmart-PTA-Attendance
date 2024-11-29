@@ -19,6 +19,7 @@ path('tracker/<uuid:tracker_pk>/headcount', views.project_headcount_view, name="
 
 ## Test routes for developing the calendar views ## 
 path('calendar/vanilla', views.CalendarView.as_view(), name="vanilla_calendar"),
+path('calendar', views.calendar, name="calendar")
 
 
 
