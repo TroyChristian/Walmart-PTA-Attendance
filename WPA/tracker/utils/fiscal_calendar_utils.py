@@ -1,8 +1,8 @@
 """Functions and classes for testing and development """ 
 
-import time
+
 import datetime
-from collections import namedtuple
+
 # Constants
 
 
@@ -78,7 +78,6 @@ walmart_fiscal_weeks = {
 	}
 } 
 
-WeekDayData = namedtuple('WeekDayData', ['week', 'day_raw', 'day_formatted', 'event']) 
 
 def get_walmart_fiscal_year_and_week(date, week_only=False) -> str:
 	"""
@@ -130,17 +129,6 @@ class FiscalWeekDayData:
 	def set_week(self):
 		self.week = get_walmart_fiscal_year_and_week(self.day_raw) 
 
-	def __eq__(self, other):
-		"""Custom equality check for FiscalWeekDayData."""
-		if isinstance(other, FiscalWeekDayData):
-			return (self.week == other.week and
-					self.day_raw == other.day_raw and
-					self.day_formatted == other.day_formatted)  # Compare relevant fields
-		return False
-
-	def __hash__(self):
-		"""Override hash to match equality check."""
-		return hash((self.week, self.day_raw, self.day_formatted))  # Based on fields that define equality
 
 	def associate_day_with_event(self, events):
 		"""Check if an AttendanceEvent exists for a specific day."""
@@ -186,18 +174,6 @@ def create_fiscal_week_objects(fiscal_week_day_data_array): #Take in an array of
 
 	
 
-
-
-
-
-
-
-
-def zip_weeks_days_data(weeks_to_populate, days_raw, days_formatted, event_placeholders):
-	
-	merged_list = [WeekDayData(week, day_raw, day_formatted, event_placeholders)
-				   for week, day_raw, day_formatted, placeholder in zip(weeks_to_populate, days_raw, days_formatted, event_placeholders)]
-	return merged_list 
 
 def create_fiscal_week_day_data_objects(weeks_to_populate, days_raw, days_formatted):
 	week_day_data_objects_list = [FiscalWeekDayData(week, day_raw, day_formatted)
