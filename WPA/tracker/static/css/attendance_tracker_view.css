@@ -55,3 +55,9 @@
   .dropdown-menu {
     min-width: 200px;
   }
+
+
+  .active-item {
+    background-color: #007bff; /* Highlight color (Bootstrap primary color) */
+    color: white; /* White text on highlight */
+  }
