@@ -15,7 +15,8 @@ path('tracker/manage_associates', views.manage_associates_view, name="manage_ass
 path('alerts', views.user_alerts_view, name="alerts"),
 path('tracker/<int:tracker_pk>/associate/<int:associate_pk>/attendance', views.associate_attendance_view, name="associate_attendance"),
 path('tracker/team/headcount', views.team_headcount_view, name="team_headcount"),
-path('tracker/<int:tracker_pk>/headcount', views.project_headcount_view, name="project_headcount"),
+#path('tracker/<int:tracker_pk>/headcount', views.project_headcount_view, name="project_headcount"),
+path('tracker/project/headcount', views.project_headcount_view, name="project_headcount"),
 
 ## Test routes for developing the calendar views ## 
 path('calendar/vanilla', views.CalendarView.as_view(), name="vanilla_calendar"),

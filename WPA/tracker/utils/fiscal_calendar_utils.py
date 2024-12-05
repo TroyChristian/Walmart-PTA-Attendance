@@ -79,30 +79,7 @@ walmart_fiscal_weeks = {
 } 
 
 
-# def get_walmart_fiscal_year_and_week(date, week_only=False) -> str:
-# 	"""
-# 	Given a date, return the Walmart fiscal year and fiscal week number in the format YYYYWW.
-# 	""" 
-# 	formatted_date = format_date(date) # so that date matches the dictionary format
-# 	fiscal_year = date.year
-# 	fiscal_week = None 
 
-
-# 	# Search for the fiscal week in the dictionary
-# 	for year, weeks in walmart_fiscal_weeks.items():
-# 		for week, dates in weeks.items():
-# 			if formatted_date in dates:
-# 				fiscal_week = week
-# 				break
-
-# 	if fiscal_week is None:
-# 		return f"Week not found in fiscal year for {formatted_date}."  # Handle out-of-range dates
-
-# 	# Return the formatted fiscal year and week
-# 	if week_only:
-# 		return str(fiscal_week)
-# 	else:
-# 		return f"{fiscal_year}{fiscal_week:02d}" 
 
 def get_walmart_fiscal_year_and_week(date, week_only=False) -> str:
 	"""
