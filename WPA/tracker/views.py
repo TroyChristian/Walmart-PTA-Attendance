@@ -101,11 +101,11 @@ def associate_attendance_view(request):
 def team_headcount_view(request): 
 	#wireframe 10
 	if request.method == "GET":
-		team = Team.objects.filter(pk=4).first() #hardcode for test
+		team = Team.objects.filter(pk=1).first() #hardcode for test
 		events = AttendanceEvent.objects.all().filter(team=team).order_by("created_at") # all attendance events for this team
 		weeks_to_populate = du.weeks_to_populate(events) #all weeks those attendance events belong to
 		weeks_to_populate = weeks_to_populate[::-1] #reverse slice ensures that the most recent week is populated first. 
-		days_formatted, days_raw = du.days_to_populate(weeks_to_populate)  #All the days in all of the weeks. days_raw is an array of datetime objects days_formatted is an array of string
+		#days_formatted, days_raw = du.days_to_populate(weeks_to_populate)  #All the days in all of the weeks. days_raw is an array of datetime objects days_formatted is an array of string
 
 		team_headcount_week_dict = {} 
 		for week in weeks_to_populate: 
@@ -132,7 +132,7 @@ def team_headcount_view(request):
 		
 		
 
-		print(team_headcount_week_dict)
+		
 		context = {"weeks_to_populate":weeks_to_populate, "team_headcount_week_dict":team_headcount_week_dict}
 		return render(request, 'team_headcount_view.html', context)
 
@@ -140,7 +140,34 @@ def team_headcount_view(request):
 def project_headcount_view(request): 
 	#wireframe 11
 	if request.method == "GET":
-		return render(request, 'project_headcount_view.html') 
+		events = AttendanceEvent.objects.all().order_by("created_at") # all attendance events for this team
+		weeks_to_populate = du.weeks_to_populate(events) #all weeks those attendance events belong to
+		weeks_to_populate = weeks_to_populate[::-1] #reverse slice ensures that the most recent week is populated first. 
+		#days_formatted, days_raw = du.days_to_populate(weeks_to_populate)  #All the days in all of the weeks. days_raw is an array of datetime objects days_formatted is an array of string
+
+		team_headcount_week_dict = {} 
+		for week in weeks_to_populate: 
+
+			team_headcount_week = du.TeamHeadCountWeek(week=week)
+			team_headcount_week.team_week_day_data = du.TeamWeekDayData(week=week) 
+			team_headcount_week_dict[week] = team_headcount_week
+
+		
+		
+		for team_headcount_week in team_headcount_week_dict.values():
+			twdd = team_headcount_week.team_week_day_data #This attribute holds the days and events of the weeks
+			days_formatted = du.get_this_weeks_days_formatted(twdd.week)
+			days_raw = du.get_this_weeks_days_raw(twdd.week)
+			twdd.days_formatted = days_formatted 
+			twdd.days_raw = days_raw 
+			filtered_events = du.associate_TWDD_with_events(twdd, events)
+			twdd.events = filtered_events
+			twdd.set_days_workers_tally() 
+			team_headcount_week.set_average_headcount()
+
+		context = {"weeks_to_populate":weeks_to_populate, "team_headcount_week_dict":team_headcount_week_dict}
+		import pdb; pdb.set_trace()
+		return render(request, 'project_headcount_view.html', context) 
 
 
 #test views for developing calendar

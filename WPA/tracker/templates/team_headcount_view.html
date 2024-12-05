@@ -16,7 +16,7 @@
   </head>
 
 <body>
-	<strong> {{ team_name }} </strong>
+	<strong> {{ project_name }} </strong>
   {% if weeks_to_populate %}
     {% for week_key in team_headcount_week_dict.keys %}
       <!-- Week Key displayed at the top of each row -->
@@ -34,7 +34,7 @@
             {% endfor %}
           
         </div>
-        Team Daily Attendance Average: {{ team_headcount_week.headcount }}
+        Project Daily Attendance Average: {{ team_headcount_week.headcount }}
         {% endwith %}
       </div>
     {% endfor %}
