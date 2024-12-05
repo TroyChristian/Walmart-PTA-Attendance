@@ -196,7 +196,15 @@ class AttendanceEvent(models.Model):
 		related_name='updated_attendance_events',
 		null=True,
 		blank=True
-	)
+	) 
+
+	team = models.ForeignKey(
+	Team, 
+	on_delete=models.PROTECT,  # Protect the team from deletion if it has attendance events
+	null=True,
+	blank=True,
+	related_name='team_attendance_events'  # Allows reverse access from Team to AttendanceEvent
+)
 
 	@property
 	def point_value(self):

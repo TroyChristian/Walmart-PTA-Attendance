@@ -15,7 +15,7 @@ walmart_fiscal_weeks = {
 		45: ['11-30-2024', '12-01-2024', '12-02-2024', '12-03-2024', '12-04-2024', '12-05-2024', '12-06-2024'],
 		46: ['12-07-2024', '12-08-2024', '12-09-2024', '12-10-2024', '12-11-2024', '12-12-2024', '12-13-2024'],
 		47: ['12-14-2024', '12-15-2024', '12-16-2024', '12-17-2024', '12-18-2024', '12-19-2024', '12-20-2024'],
-		48: ['12-21-2024', '12-22-2024', '12-23-2024', '12-24-2024', '12-25-2024', '12-25-2024', '12-26-2024', '12-27-2024'],
+		48: ['12-21-2024', '12-22-2024', '12-23-2024', '12-24-2024', '12-25-2024',  '12-26-2024', '12-27-2024'],
 		49: ['12-28-2024', '12-29-2024', '12-30-2024', '12-31-2024', '01-01-2025', '01-02-2025', '01-03-2025'],
 		50: ['01-04-2025', '01-05-2025', '01-06-2025', '01-07-2025', '01-08-2025', '01-09-2025', '01-10-2025'],
 		51: ['01-11-2025', '01-12-2025', '01-13-2025', '01-14-2025', '01-15-2025', '01-16-2025', '01-17-2025'],
@@ -79,12 +79,37 @@ walmart_fiscal_weeks = {
 } 
 
 
+# def get_walmart_fiscal_year_and_week(date, week_only=False) -> str:
+# 	"""
+# 	Given a date, return the Walmart fiscal year and fiscal week number in the format YYYYWW.
+# 	""" 
+# 	formatted_date = format_date(date) # so that date matches the dictionary format
+# 	fiscal_year = date.year
+# 	fiscal_week = None 
+
+
+# 	# Search for the fiscal week in the dictionary
+# 	for year, weeks in walmart_fiscal_weeks.items():
+# 		for week, dates in weeks.items():
+# 			if formatted_date in dates:
+# 				fiscal_week = week
+# 				break
+
+# 	if fiscal_week is None:
+# 		return f"Week not found in fiscal year for {formatted_date}."  # Handle out-of-range dates
+
+# 	# Return the formatted fiscal year and week
+# 	if week_only:
+# 		return str(fiscal_week)
+# 	else:
+# 		return f"{fiscal_year}{fiscal_week:02d}" 
+
 def get_walmart_fiscal_year_and_week(date, week_only=False) -> str:
 	"""
 	Given a date, return the Walmart fiscal year and fiscal week number in the format YYYYWW.
 	""" 
 	formatted_date = format_date(date) # so that date matches the dictionary format
-	fiscal_year = date.year
+	fiscal_year = None
 	fiscal_week = None 
 
 
@@ -93,10 +118,11 @@ def get_walmart_fiscal_year_and_week(date, week_only=False) -> str:
 		for week, dates in weeks.items():
 			if formatted_date in dates:
 				fiscal_week = week
+				fiscal_year = year
 				break
 
 	if fiscal_week is None:
-		return "Week not found in fiscal year."  # Handle out-of-range dates
+		return f"Week not found in fiscal year for {formatted_date}."  # Handle out-of-range dates
 
 	# Return the formatted fiscal year and week
 	if week_only:
@@ -106,12 +132,13 @@ def get_walmart_fiscal_year_and_week(date, week_only=False) -> str:
 
 
 class FiscalWeekDayData:
+	"""For encapsulating the attendance of a single associate"""
 	def __init__(self, week=None, day_raw=None, day_formatted=None, event=None):
 		self.week = week #fiscal week
 		self.day_raw =day_raw #datetime to map to event
 		self.day_formatted = day_formatted #formatted day for display 
 		self.event = event #stores AttendanceEvent
-	
+
 	def __str__(self): 
 		return f"FiscalWeekDayData: week:{self.week} day:{self.day_formatted} event: {self.event}"
 
@@ -130,27 +157,88 @@ class FiscalWeekDayData:
 		self.week = get_walmart_fiscal_year_and_week(self.day_raw) 
 
 
-	def associate_day_with_event(self, events):
-		"""Check if an AttendanceEvent exists for a specific day."""
-		for event in events:
-			if event.created_at.date() == self.day_raw:  # Compare only the date part
-				self.event = event
-				break
-		return None  # No event found for this day
-
-
-
-
 class FiscalWeek:
+	"""For encapsulating the attendance of a single associate"""
 	def __init__(self, week=None, day_data_array=None): 
 		self.week = week 
-		self.day_data_array = day_data_array
+		self.day_data_array = day_data_array #[FiscalWeekDayData]
+
 	def __str__(self): 
 		return f"FiscalWeek: week {self.week} day_data_array: {len(self.day_data_array)} FWDD objects in array"
 
 	def __repr__(self): 
 		return f"FiscalWeek: week {self.week} day_data_array: {len(self.day_data_array)} FWDD objects in array"
+
+class TeamWeekDayData(FiscalWeekDayData):
+	def __init__(self, week=None, days_raw=[], days_formatted=[], events=[], days_workers_tally=[]): #days_raw and days_formatted in this class will arrays of days
+		super().__init__(week, days_raw, days_formatted)  # Call parent class __init__
+		self.events = events  # Store a list of events opposed to a single event
+		self.days_raw = days_raw 
+		self.days_formatted = days_formatted
+		self.days_workers_tally = days_workers_tally
+
+	def set_days_workers_tally(self): 
+		day_counts = []
+		for day_f in self.days_formatted:
+			count = self.set_worker_count_for_day(day_f)
+			day_count = (day_f, count)
+			day_counts.append(day_count) 
+
+		#print(day_counts)
+		self.days_workers_tally = day_counts
+
+
+
+
+	def set_worker_count_for_day(self, day_formatted):
+		worked_attendance_values = ["W", "EI", "EO", "ES" "IS"] #count all events were an associate worked for any given amount of time.
+		day_formatted_date = convert_formatted_date_string_to_date_object(day_formatted)
+		count = 0 
+		for event in self.events:
+			if event.created_at.date() == day_formatted_date and event.event.code in worked_attendance_values:
+				count += 1
+		return count
+
 	
+
+
+
+
+	def __str__(self):
+		return f"TeamWeekDayData: week:{self.week} days:{self.days_formatted} events: #{len(self.events)} events"
+
+	def __repr__(self):
+		return f"TeamWeekDayData: week:{self.week} days:{self.days_formatted} events: #{len(self.events)} events"
+
+class TeamHeadCountWeek(FiscalWeek):
+	def __init__(self, week=None, headcount=None): #This day data array will hold TeamWeekDayData objects which themselves will hold an array of events not a single event. This class will also have a headcount attribute.
+		super().__init__(week) 
+		self.headcount = headcount
+		team_week_day_data = None
+
+	def set_average_headcount(self):
+		"""Set average headcount on the week"""
+		avg = 0
+		weekly_worker_count = 0
+		elements = 0
+		if self.team_week_day_data:
+			for _, count in self.team_week_day_data.days_workers_tally:
+				weekly_worker_count += count 
+				elements += 1 
+
+		avg = weekly_worker_count / elements 
+		self.headcount = avg
+		print(avg)
+
+
+	def __str__(self): 
+		return f"TeamHeadCountWeek: week: {self.week} headcount: {self.headcount} \n team_week_day_data: {self.team_week_day_data}"
+
+
+	def __repr__(self): 
+		return f"TeamHeadCountWeek: week: {self.week} headcount: {self.headcount} \n team_week_day_data: {self.team_week_day_data}" 
+
+
 
 
 
@@ -170,19 +258,14 @@ def create_fiscal_week_objects(fiscal_week_day_data_array): #Take in an array of
 		print(days_array)
 		fiscal_week_dict[k].day_data_array = days_array 
 		print(fiscal_week_dict[k]) 
-	return fiscal_week_dict
-
-	
+	return fiscal_week_dict 
 
 
-def create_fiscal_week_day_data_objects(weeks_to_populate, days_raw, days_formatted):
-	week_day_data_objects_list = [FiscalWeekDayData(week, day_raw, day_formatted)
-				   for week, day_raw, day_formatted in zip(weeks_to_populate, days_raw, days_formatted)]
-	return week_day_data_objects_list
 
 def format_date(event_created_at) -> str:
 	#event_date = str(event_created_at.date()) #'2024-11-25', '02-02-2025'
 	formatted_date = event_created_at.strftime('%m-%d-%Y')
+	print(f"format_date: {formatted_date}")
 	return formatted_date
 
 
@@ -193,11 +276,23 @@ def format_datetime_array(datetime_array) -> [str]:
 		formatted_dates.append(format_date(date))
 	return formatted_dates 
 
+def convert_formatted_date_string_to_date_object(date_str):
+	#take m-d-y (11-22-2024) date_str convert it to year-month-day datetime object.
+	# 9 chars from 0 index. 0 and 1 are the month, 3,4 are the day. 6-9 are the year.
+	month = date_str[0:2] #0 -1
+	day = date_str[3:5] #3-4
+	year = date_str[6:10] 
+
+	date = datetime.date(int(year), int(month), int(day))
+	return date
+	
 
 
 
 
-# function 2: get_days_in_walmart_fiscal_week
+
+
+# Getting the year in this way is fine for this function - tested.
 def get_days_in_walmart_fiscal_week(fiscal_week_str: str):
 	"""
 	Given a Walmart fiscal week as a string in the format 'YYYYWW' (e.g., '202443'),
@@ -218,7 +313,8 @@ def weeks_to_populate(events) -> [int]:
 	weeks = []
 	for event in events:
 		week = get_walmart_fiscal_year_and_week(event.created_at)
-		if len(week) == 6: #If a 6 character year/week combo is found in the dictionary
+		print(f"weeks_to_populate:Evaulating week: {week}")
+		if len(week) == 6 and week not in weeks: #If a 6 character year/week combo is found in the dictionary and its not in weeks yet
 			weeks.append(week) 
 	return weeks #this count is how many 7 day div rows we are going to populate the template with.
 
@@ -233,9 +329,36 @@ def days_to_populate(fiscal_week_numbers) -> [str]: #[str])
 			days_array_formatted.append(format_date(day)) #formatted days to display
 	return (days_array_formatted, days_array)
 
-	
 
 
+def get_this_weeks_days_formatted(fiscal_week_number):
+	"""Take in six character fiscal_week_number str ie: 202443 and retrieve those days froms the fiscal_week_dict"""
+	fiscal_year = int(fiscal_week_number[:4])  # First 4 characters as the year
+	fiscal_week = int(fiscal_week_number[4:])  # Last 2 characters as the week number
+	if fiscal_year in walmart_fiscal_weeks.keys():
+		this_weeks_days_formatted = walmart_fiscal_weeks[fiscal_year][fiscal_week] 
+		return this_weeks_days_formatted 
+
+def get_this_weeks_days_raw(fiscal_week_number):
+	fiscal_year = int(fiscal_week_number[:4])  # First 4 characters as the year
+	fiscal_week = int(fiscal_week_number[4:])  # Last 2 characters as the week number
+	if fiscal_year in walmart_fiscal_weeks.keys():
+		this_weeks_days_formatted = walmart_fiscal_weeks[fiscal_year][fiscal_week] 	
+		this_weeks_days_raw = [] 
+		for day in this_weeks_days_formatted:
+			day_date = convert_formatted_date_string_to_date_object(day)
+			this_weeks_days_raw.append(day_date)
+		return this_weeks_days_raw
+
+
+def associate_TWDD_with_events(twdd, events):
+	"""Associate days of a TeamWeekDayData with their events."""
+	filtered_events = []
+	for event in events:
+		if event.created_at.date() in twdd.days_raw:  
+			filtered_events.append(event) 
+
+	return filtered_events
 
 
 
@@ -247,7 +370,6 @@ def get_attendance_event_year_week_walmart_fiscal_calendar(event, week_only=Fals
 
 
 
-# New Approach
 
 
 
