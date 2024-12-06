@@ -1,12 +1,63 @@
+{% extends "base.html" %}
 {% load static %}
 
 
+{% block header %}
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="{% static 'css/create_attendace_tracker.css' %}" />
-    
-    <title> PTA Attendance Tracker </title>
+    <link rel="stylesheet" href="{% static 'css/base_two.css'%}">
+    <link rel="stylesheet" href="{% static 'css/create_attendance_tracker.css' %}" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-yCBHF45xaiF9zVBKZ1cOpFYRmPDiTD+WZaBgId8GBq1fTDD3g4m1RE+Ove2wINQ+" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <title> {% block title %} Create Attendance Tracker {% endblock %} </title>
   </head>
-<p> test </p>
+    
+{% endblock %}  
+
+<body>
+  
+
+{% block content %}
+      
+      
+      
+        <div class="form-container container-fluid h-65 w-50">
+          <h4>Create an attendance Tracker for a store remodel project</h4>
+          <div class="d-flex flex-column aglin-items-center gap-3">
+            <input required type="text" placeholder="Store Number">
+            <input type="text" name="" id="" placeholder="Store Address">
+            <button class="btn btn-success"  data-bs-toggle="modal" data-bs-target="#create-modal">Create Attendance Tracker</button>
+          </div>
+      </div>
+
+      <div class="modal fade" id="create-modal" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modal-title">Would you like to grant other users access to this attendance tracker? Access can be granted at another time from the project dashboard</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="close"></button>
+            </div>
+
+            <div class="modal-body">
+              <input type="search">
+              <div class="selected-users">
+                <img src="https://via.placeholder.com/40" alt="profile placeholder" style="width: 40px; height: 40px;">
+                <p>mike steere</p>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button class="btn btn-success">Grant Access to attendance tracker</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+{% endblock %}
+  
+</body>

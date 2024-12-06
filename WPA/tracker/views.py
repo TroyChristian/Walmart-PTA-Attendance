@@ -140,6 +140,7 @@ def team_headcount_view(request):
 def project_headcount_view(request): 
 	#wireframe 11
 	if request.method == "GET":
+
 		events = AttendanceEvent.objects.all().order_by("created_at") # all attendance events for this team
 		weeks_to_populate = du.weeks_to_populate(events) #all weeks those attendance events belong to
 		weeks_to_populate = weeks_to_populate[::-1] #reverse slice ensures that the most recent week is populated first. 
@@ -233,5 +234,9 @@ def calendar(request):
 		context = {'associate': associate, 'weeks_to_populate':weeks_to_populate, 'fiscal_week_dict':fiscal_week_dict}
 		
 		return render(request, 'calendar.html', context)
+
+
+
+		return render(request, 'project_headcount_view.html')
 
 
