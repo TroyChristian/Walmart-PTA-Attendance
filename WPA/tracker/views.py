@@ -11,10 +11,13 @@ from tracker.utils import fiscal_calendar_utils as du
 # Create your views here.
 
 
-def attendance_tracker_overview(request):
+def projects_overview(request):
 	#wireframe 1
 	if request.method == "GET":
-		return render(request, 'attendance_tracker_overview.html')
+		user = request.user
+		authorized_projects = user.authorized_projects.all() 
+		context = {"projects":authorized_projects}
+		return render(request, 'attendance_tracker_overview.html', context)
 
 
 def create_attendance_tracker(request):
@@ -23,7 +26,7 @@ def create_attendance_tracker(request):
 		return render(request, 'create_attendance_tracker.html')
 
 
-def attendance_tracker_view(request): 
+def attendance_tracker_view(request, project_pk): 
 	#wireframe 3
 	if request.method == "GET":
 		return render(request, 'attendance_tracker_view.html')
@@ -137,7 +140,7 @@ def team_headcount_view(request):
 		return render(request, 'team_headcount_view.html', context)
 
 
-def project_headcount_view(request): 
+def project_headcount_view(request, project_pk): 
 	#wireframe 11
 	if request.method == "GET":
 
