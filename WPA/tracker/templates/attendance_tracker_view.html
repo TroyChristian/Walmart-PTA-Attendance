@@ -25,7 +25,7 @@
             <!-- Child Div 2 -->
             <div class="p-3  me-2 mb-2"><button class="btn btn-primary">Quick Add Associate to this Attendance Tracker</button></div>
             <!-- Child Div 3 -->
-            <div class="p-3  me-2 mb-2"><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-team-modal">Quick Add Team</button>
+            <div class="p-3  me-2 mb-2"><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#QuickAddTeam">Quick Add Team</button>
 </div>
 
         </div>
@@ -63,8 +63,11 @@
 
 <div class="container">
   <!-- Row 1: where your component will be placed -->
+  {% for team in teams %} 
+ 
   <div class="row1">
     <div class="col-12">
+      <a href="{% url 'team_attendance' project.pk team.pk %}">
       <div class="card-custom d-flex justify-content-between align-items-center">
         <!-- Counter for absentee members -->
         <div class="counter">
@@ -72,9 +75,10 @@
         </div>
 
         <!-- Team name and attendance info -->
+        
         <div class="team-info">
-          <div>Team: <strong>Build and Move</strong></div>
-          <div>Attendance: <strong>15/20</strong> associates present</div>
+          <div>Team: <strong>{{ team.team_name }}</strong></div>
+          <div>Attendance: <strong>15/20</strong> Associates Tracked</div>
         </div>
 
         <div class="dropdown">
@@ -83,110 +87,72 @@
           </button>
           <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
             <li>
-              <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#modalOption1">Edit Team</button>
+              <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#EditTeam">Edit Team</button>
             </li>
             <li>
-              <button class="dropdown-item m-1 p-1"><a class="text-dark text-decoration-none" href="" >View Historical headcounts</a></button>
+              <button class="dropdown-item m-1 p-1"><a class="text-dark text-decoration-none" href="{% url 'team_headcount' team.pk %}" >View Historical headcounts</a></button>
             </li>
 
           </ul>
         </div>
       </div>
+      </a>
     </div>
   </div>
 
-  <!-- Additional rows for other content -->
-  <div class="row"></div>
-  <div class="row"></div>
+
+
+  {% endfor %}
+
 </div>
 
 <!-- Modals -->
-<div class="modal fade" id="modalOption1" tabindex="-1" aria-labelledby="modalOption1Label" aria-hidden="true">
+<form method="POST">
+<div class="modal fade" id="QuickAddTeam" tabindex="-1" aria-labelledby="AddTeam" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="modalOption1Label">Add To Team</h5>
+        <h5 class="modal-title" id="AddTeam">Add Team to Project</h5>
       </div>
       <div class="modal-body">
         <div class="container">
           <div class="row">
-            <input class="aling-text-center" type="text" placeholder="Team Name">
-          </div>
 
-          <div class="row mt-3">
-            <div class="col-12">
-              <div class="time-select d-flex align-items-center">
-                <!-- Start Time -->
-                <label for="start-time" class="form-label mb-0 me-2">Start Time:</label>
-                <select class="form-select me-3" id="start-time" style="width: 120px;">
-                  <option selected disabled>Select</option>
-                  <option>12:00 AM</option>
-                  <option>1:00 AM</option>
-                  <option>2:00 AM</option>
-                  <option>3:00 AM</option>
-                  <option>4:00 AM</option>
-                  <option>5:00 AM</option>
-                  <option>6:00 AM</option>
-                  <option>7:00 AM</option>
-                  <option>8:00 AM</option>
-                  <option>9:00 AM</option>
-                  <option>10:00 AM</option>
-                  <option>11:00 AM</option>
-                  <option>12:00 PM</option>
-                  <option>1:00 PM</option>
-                  <option>2:00 PM</option>
-                  <option>3:00 PM</option>
-                  <option>4:00 PM</option>
-                  <option>5:00 PM</option>
-                  <option>6:00 PM</option>
-                  <option>7:00 PM</option>
-                  <option>8:00 PM</option>
-                  <option>9:00 PM</option>
-                  <option>10:00 PM</option>
-                  <option>11:00 PM</option>
-                </select>
-      
-                <!-- End Time -->
-                <label for="end-time" class="form-label mb-0 me-2">End Time:</label>
-                <select class="form-select" id="end-time" style="width: 120px;">
-                  <option selected disabled>Select</option>
-                  <option>12:00 AM</option>
-                  <option>1:00 AM</option>
-                  <option>2:00 AM</option>
-                  <option>3:00 AM</option>
-                  <option>4:00 AM</option>
-                  <option>5:00 AM</option>
-                  <option>6:00 AM</option>
-                  <option>7:00 AM</option>
-                  <option>8:00 AM</option>
-                  <option>9:00 AM</option>
-                  <option>10:00 AM</option>
-                  <option>11:00 AM</option>
-                  <option>12:00 PM</option>
-                  <option>1:00 PM</option>
-                  <option>2:00 PM</option>
-                  <option>3:00 PM</option>
-                  <option>4:00 PM</option>
-                  <option>5:00 PM</option>
-                  <option>6:00 PM</option>
-                  <option>7:00 PM</option>
-                  <option>8:00 PM</option>
-                  <option>9:00 PM</option>
-                  <option>10:00 PM</option>
-                  <option>11:00 PM</option>
-                </select>
+            <!-- <input class="aling-text-center" type="text" placeholder="Team Name"> -->
+            {{ create_team_form }} 
+            <div class="form-group">
+
+
+          </div>
+             <div class="row mt-3">
+              <div class="col-12">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ShiftTimeModal">
+                  Add Shift Time
+                </button>
               </div>
             </div>
           </div>
+
+
+          </div>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-success">Add</button>
-        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+        <div class="modal-footer">
+          <button class="btn btn-success">Add</button>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
+        </div>
+      </div>
+<!--       <div class="modal-footer">
+        <button class="btn btn-success">Add</button>
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+      </div> -->
+    </div>
+  </div>
+</div> 
+</form> <!-- end quick add team form -->
 
 <!---Quick add modal-->
 <div class="modal fade" id="add-team-modal" tabindex="-1" aria-labelledby="add-team-modalLabel" aria-hidden="true">
@@ -229,15 +195,29 @@
       
     </div>
   </div>
+<!-- Modal for adding shift time -->
+<div class="modal fade" id="ShiftTimeModal" tabindex="-1" aria-labelledby="ShiftTimeModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ShiftTimeModalLabel">Add Shift Time</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- The shift time form -->
+        <form method="POST" action="#">
+          {% csrf_token %}
+          {{ shift_time_form.as_p }}  <!-- Render the ShiftTime form here -->
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Add Shift Time</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
 
-<!-- Bootstrap and Popper.js  Comment out. This template inherits boostrap js and css from baseTwo-->
-
-<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script> -->
-
-
-
-<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script> -->
 
 
 <script>

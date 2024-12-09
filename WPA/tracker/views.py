@@ -3,10 +3,13 @@ from django.http import JsonResponse, HttpResponse
 from datetime import datetime, date
 from django.views import generic
 from django.utils.safestring import mark_safe
-from .models import AttendanceEvent, Associate, Team
+from .models import Project, AttendanceEvent, Associate, Team
 
 #utils 
 from tracker.utils import fiscal_calendar_utils as du 
+
+#forms 
+from .forms import CreateTeamForm, ShiftTimeForm
 
 # Create your views here.
 
@@ -29,11 +32,17 @@ def create_attendance_tracker(request):
 def attendance_tracker_view(request, project_pk): 
 	#wireframe 3
 	if request.method == "GET":
-		return render(request, 'attendance_tracker_view.html')
+		project = Project.objects.get(pk=project_pk)
+		teams = Team.objects.filter(project=project) 
+		create_team_form = CreateTeamForm()
+		shift_time_form = ShiftTimeForm()
+		context = {"project":project, "teams":teams, "create_team_form":create_team_form, "shift_time_form":shift_time_form}
+		import pdb; pdb.set_trace()
+		return render(request, 'attendance_tracker_view.html', context)
 
 
 
-def team_attendance_view(request): 
+def team_attendance_view(request, project_pk, team_pk): 
 	#wireframe 4
 	if request.method == "GET":
 		return render(request, 'team_attendance_view.html')
@@ -101,10 +110,10 @@ def associate_attendance_view(request):
 		return render(request, 'associate_attendance_view.html', context)
 
 
-def team_headcount_view(request): 
+def team_headcount_view(request, team_pk): 
 	#wireframe 10
 	if request.method == "GET":
-		team = Team.objects.filter(pk=1).first() #hardcode for test
+		team = Team.objects.filter(pk=team_pk).first() #hardcode for test
 		events = AttendanceEvent.objects.all().filter(team=team).order_by("created_at") # all attendance events for this team
 		weeks_to_populate = du.weeks_to_populate(events) #all weeks those attendance events belong to
 		weeks_to_populate = weeks_to_populate[::-1] #reverse slice ensures that the most recent week is populated first. 
@@ -170,7 +179,7 @@ def project_headcount_view(request, project_pk):
 			team_headcount_week.set_average_headcount()
 
 		context = {"weeks_to_populate":weeks_to_populate, "team_headcount_week_dict":team_headcount_week_dict}
-		import pdb; pdb.set_trace()
+
 		return render(request, 'project_headcount_view.html', context) 
 
 
