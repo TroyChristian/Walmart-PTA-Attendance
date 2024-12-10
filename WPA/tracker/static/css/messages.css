@@ -1,0 +1,53 @@
+/* General message box styling */
+.message {
+    border-radius: 4px;
+    padding: 15px;
+    margin: 10px 0;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Success message */
+.message.success {
+    background-color: #28a745; /* Green */
+    border: 1px solid #218838;
+}
+
+/* Error message */
+.message.error {
+    background-color: #dc3545; /* Red */
+    border: 1px solid #c82333;
+}
+
+/* Warning message */
+.message.warning {
+    background-color: #ffc107; /* Yellow */
+    border: 1px solid #e0a800;
+    color: #212529;
+}
+
+/* Info message */
+.message.info {
+    background-color: #17a2b8; /* Blue */
+    border: 1px solid #138496;
+}
+
+/* Optional: Close button for dismissing messages */
+.message .close {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    font-size: 1.25rem;
+    color: #fff;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+/* Hover effects for dismiss button */
+.message .close:hover {
+    color: #000;
+    opacity: 0.8;
+}
