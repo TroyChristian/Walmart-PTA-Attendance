@@ -24,7 +24,7 @@
             <!-- Child Div 1 -->
             <div class="p-3   me-2 mb-2"><button class="btn btn-primary">Manage Existing Associates for this Attendance Tracker</button></div>
             <!-- Child Div 2 -->
-            <div class="p-3  me-2 mb-2"><button class="btn btn-primary">Quick Add Associate to this Attendance Tracker</button></div>
+            <div class="p-3  me-2 mb-2"><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-associate-modal">Quick Add Associate to this Attendance Tracker</button></div>
             <!-- Child Div 3 -->
             <div class="p-3  me-2 mb-2"><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#QuickAddTeam">Quick Add Team</button>
 </div>
@@ -111,6 +111,7 @@
 
 <!-- Modals -->
 <form method="POST" > <!-- quick add team form -->
+  {% csrf_token %}
 <div class="modal fade" id="QuickAddTeam" tabindex="-1" aria-labelledby="AddTeam" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -157,47 +158,46 @@
 </div> 
 </form> <!-- end quick add team form -->
 
-<!---Quick add modal-->
-<div class="modal fade" id="add-team-modal" tabindex="-1" aria-labelledby="add-team-modalLabel" aria-hidden="true">
+<!---Quick add associate modal-->
+<div class="modal fade" id="add-associate-modal" tabindex="-1" aria-labelledby="add-associate-modal-label" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="add-team-modalLabel">Quick Add</h5>
+        <h5 class="modal-title" id="add-associate-modal-label">Add Associate</h5>
       </div>
 
       <div class="modal-body">
-        <div class="container d-flex justify-content-center">
-           <div class="col-12">
-        <!-- Main List Group -->
-        <div class="row">
-          <!-- Team Names -->
-          <div class="col-6">
-            <div class="list-group">
-              <button class="list-group-item list-group-item-action" onclick="highlightItem(this)">Build and Move Team</button>
-              <button class="list-group-item list-group-item-action" onclick="highlightItem(this)">Mod Team</button>
-              <button class="list-group-item list-group-item-action" onclick="highlightItem(this)">Outside Team</button>
-            </div>
+        <form method="POST">
+          {% csrf_token %}
+          
+          <!-- Associate Form -->
+          <div class="mb-3">
+            <label for="id_name" class="form-label">Associate Name</label>
+            {{ assoc_form.name}}
           </div>
-          <!-- Shift Times -->
-          <div class="col-6">
-            <div class="list-group">
-              <button class="list-group-item list-group-item-action" onclick="highlightItem(this)">8:00 AM - 5:00 PM</button>
-              <button class="list-group-item list-group-item-action" onclick="highlightItem(this)">9:00 AM - 6:00 PM</button>
-              <button class="list-group-item list-group-item-action" onclick="highlightItem(this)">10:00 AM - 7:00 PM</button>
-            </div>
+
+          <!-- Team Assignment -->
+          <div class="mb-3">
+            <label for="id_teams" class="form-label">Assign Team</label>
+            {{ assign_team_form.teams }}
           </div>
-        </div>
+
+          <!-- Shift Time Assignment -->
+          <div class="mb-3">
+            <label for="id_shift_time" class="form-label">Assign Shift Time</label>
+            {{ assign_shift_time_form.shift_time}}
+          </div>
+
+          <!-- Modal Footer -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary" name="add_associate">Add Associate</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-    <button type="button" class="btn btn-primary">Save Changes</button>
-  </div>
-  </div>
-      
-    </div>
-  </div>
+</div>
 <!-- Modal for adding shift time -->
 <div class="modal fade" id="ShiftTimeModal" tabindex="-1" aria-labelledby="ShiftTimeModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -224,7 +224,7 @@
 
 
 
-<script>
+<!-- <script>
   document.addEventListener("DOMContentLoaded", function() {
     // Define the function inside the event listener to ensure it's executed after the DOM is loaded
     function highlightItem(element) {
@@ -245,7 +245,7 @@
       });
     });
   });
-</script>
+</script> -->
 {% endblock %}
 
 

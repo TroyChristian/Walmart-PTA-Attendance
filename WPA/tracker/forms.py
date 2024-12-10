@@ -1,5 +1,5 @@
 from django import forms 
-from .models import Team, ShiftTime
+from .models import Team, ShiftTime, Associate
 
 class CreateProjectForm(forms.ModelForm):
 	#store # 
@@ -36,7 +36,22 @@ class EditTeamForm(forms.ModelForm):
 
 
 class CreateAssociateForm(forms.ModelForm):
-	pass 
+	name = forms.CharField(widget=forms.TextInput(attrs={'class': "form-control"}))
+
+	class Meta:
+		model = Associate
+		fields = ['name']
+		widgets = {
+			'name': forms.TextInput(attrs={'class': 'form-control'}),
+		}
+
+class AssignTeamForm(forms.Form):
+	teams = forms.ModelChoiceField(queryset=Team.objects.all(), required=True, 
+								   widget=forms.Select(attrs={'class': 'form-select'}))
+
+class AssignShiftTimeForm(forms.Form):
+	shift_time = forms.ModelChoiceField(queryset=ShiftTime.objects.all(), required=True,
+										widget=forms.Select(attrs={'class': 'form-select'}))
 
 class EditAssociateNameForm(forms.ModelForm):
 	pass
