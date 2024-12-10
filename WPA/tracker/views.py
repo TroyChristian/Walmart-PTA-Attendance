@@ -10,7 +10,7 @@ from .models import Project, AttendanceEvent, Associate, Team
 from tracker.utils import fiscal_calendar_utils as du 
 
 #forms 
-from .forms import CreateTeamForm, ShiftTimeForm
+from .forms import CreateTeamForm, ShiftTimeForm, CreateAssociateForm, AssignTeamForm, AssignShiftTimeForm
 
 # Create your views here.
 
@@ -35,9 +35,13 @@ def attendance_tracker_view(request, project_pk):
 	if request.method == "GET":
 		project = Project.objects.get(pk=project_pk)
 		teams = Team.objects.filter(project=project) 
+		#forms
 		create_team_form = CreateTeamForm()
 		shift_time_form = ShiftTimeForm()
-		context = {"project":project, "teams":teams, "create_team_form":create_team_form, "shift_time_form":shift_time_form}
+		assoc_form = CreateAssociateForm()
+		assign_team_form = AssignTeamForm()
+		assign_shift_time_form = AssignShiftTimeForm()
+		context = {"project":project, "teams":teams, "create_team_form":create_team_form, "shift_time_form":shift_time_form, "assoc_form":assoc_form, "assign_team_form":assign_team_form, "assign_shift_time_form":assign_shift_time_form}
 
 		return render(request, 'attendance_tracker_view.html', context)
 
@@ -69,9 +73,31 @@ def attendance_tracker_view(request, project_pk):
 					messages.alert(request, error)
 				return redirect("tracker", project_pk) 
 
-		return redirect("tracker", project_pk) 
+		
 
+		if "add_associate" in request.POST:
+			assoc_form = CreateAssociateForm(request.POST)
+			assign_team_form = AssignTeamForm(request.POST)
+			assign_shift_time_form = AssignShiftTimeForm(request.POST)
+			import pdb; pdb.set_trace()
+			if assoc_form.is_valid() and assign_team_form.is_valid() and assign_shift_time_form.is_valid():
+				associate = assoc_form.save()  # Save the associate
+				team = assign_team_form.cleaned_data['teams']
+				shift_time = assign_shift_time_form.cleaned_data['shift_time']
 
+				
+				associate.team = team
+				associate.shift_time = shift_time
+				associate.save()
+
+				messages.success(request, "Associate added to project!")
+				return redirect("tracker", project_pk) 
+		else:
+			for error in form.errors:
+				messages.alert(request, error)
+			return redirect("tracker", project_pk) 
+
+	return redirect("tracker", project_pk) 
 
 
 
