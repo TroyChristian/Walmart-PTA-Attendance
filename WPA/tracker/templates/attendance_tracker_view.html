@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="{% static 'css/attendance_tracker_view.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/messages.css' %}">
 <!--     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"> -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
@@ -15,7 +16,7 @@
 {% endblock %}
 
 {% block content %}
-
+{% include 'messages.html' %}
    <div class="container mt-4">
     <!-- Row with Left-Aligned Child Divs -->
     <div class="row">
@@ -25,7 +26,7 @@
             <!-- Child Div 2 -->
             <div class="p-3  me-2 mb-2"><button class="btn btn-primary">Quick Add Associate to this Attendance Tracker</button></div>
             <!-- Child Div 3 -->
-            <div class="p-3  me-2 mb-2"><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-team-modal">Quick Add Team</button>
+            <div class="p-3  me-2 mb-2"><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#QuickAddTeam">Quick Add Team</button>
 </div>
 
         </div>
@@ -63,19 +64,25 @@
 
 <div class="container">
   <!-- Row 1: where your component will be placed -->
+  {% for team in teams %} 
+ 
   <div class="row1">
     <div class="col-12">
+      
       <div class="card-custom d-flex justify-content-between align-items-center">
+        <a href="{% url 'team_attendance' project.pk team.pk %}">
         <!-- Counter for absentee members -->
         <div class="counter">
           <span>0</span> Absents
         </div>
 
         <!-- Team name and attendance info -->
+        
         <div class="team-info">
-          <div>Team: <strong>Build and Move</strong></div>
-          <div>Attendance: <strong>15/20</strong> associates present</div>
+          <div>Team: <strong>{{ team.team_name }}</strong></div>
+          <div>Attendance: <strong>15/20</strong> Associates Tracked</div>
         </div>
+        </a>
 
         <div class="dropdown">
           <button class="btn btn-link text-muted p-0" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
@@ -83,110 +90,72 @@
           </button>
           <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
             <li>
-              <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#modalOption1">Edit Team</button>
+              <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#EditTeam">Edit Team</button>
             </li>
             <li>
-              <button class="dropdown-item m-1 p-1"><a class="text-dark text-decoration-none" href="" >View Historical headcounts</a></button>
+              <button class="dropdown-item m-1 p-1"><a class="text-dark text-decoration-none" href="{% url 'team_headcount' team.pk %}" >View Historical headcounts</a></button>
             </li>
 
           </ul>
         </div>
       </div>
+ 
     </div>
   </div>
 
-  <!-- Additional rows for other content -->
-  <div class="row"></div>
-  <div class="row"></div>
+
+
+  {% endfor %}
+
 </div>
 
 <!-- Modals -->
-<div class="modal fade" id="modalOption1" tabindex="-1" aria-labelledby="modalOption1Label" aria-hidden="true">
+<form method="POST" > <!-- quick add team form -->
+<div class="modal fade" id="QuickAddTeam" tabindex="-1" aria-labelledby="AddTeam" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="modalOption1Label">Add To Team</h5>
+        <h5 class="modal-title" id="AddTeam">Add Team to Project</h5>
       </div>
       <div class="modal-body">
         <div class="container">
           <div class="row">
-            <input class="aling-text-center" type="text" placeholder="Team Name">
-          </div>
 
-          <div class="row mt-3">
-            <div class="col-12">
-              <div class="time-select d-flex align-items-center">
-                <!-- Start Time -->
-                <label for="start-time" class="form-label mb-0 me-2">Start Time:</label>
-                <select class="form-select me-3" id="start-time" style="width: 120px;">
-                  <option selected disabled>Select</option>
-                  <option>12:00 AM</option>
-                  <option>1:00 AM</option>
-                  <option>2:00 AM</option>
-                  <option>3:00 AM</option>
-                  <option>4:00 AM</option>
-                  <option>5:00 AM</option>
-                  <option>6:00 AM</option>
-                  <option>7:00 AM</option>
-                  <option>8:00 AM</option>
-                  <option>9:00 AM</option>
-                  <option>10:00 AM</option>
-                  <option>11:00 AM</option>
-                  <option>12:00 PM</option>
-                  <option>1:00 PM</option>
-                  <option>2:00 PM</option>
-                  <option>3:00 PM</option>
-                  <option>4:00 PM</option>
-                  <option>5:00 PM</option>
-                  <option>6:00 PM</option>
-                  <option>7:00 PM</option>
-                  <option>8:00 PM</option>
-                  <option>9:00 PM</option>
-                  <option>10:00 PM</option>
-                  <option>11:00 PM</option>
-                </select>
-      
-                <!-- End Time -->
-                <label for="end-time" class="form-label mb-0 me-2">End Time:</label>
-                <select class="form-select" id="end-time" style="width: 120px;">
-                  <option selected disabled>Select</option>
-                  <option>12:00 AM</option>
-                  <option>1:00 AM</option>
-                  <option>2:00 AM</option>
-                  <option>3:00 AM</option>
-                  <option>4:00 AM</option>
-                  <option>5:00 AM</option>
-                  <option>6:00 AM</option>
-                  <option>7:00 AM</option>
-                  <option>8:00 AM</option>
-                  <option>9:00 AM</option>
-                  <option>10:00 AM</option>
-                  <option>11:00 AM</option>
-                  <option>12:00 PM</option>
-                  <option>1:00 PM</option>
-                  <option>2:00 PM</option>
-                  <option>3:00 PM</option>
-                  <option>4:00 PM</option>
-                  <option>5:00 PM</option>
-                  <option>6:00 PM</option>
-                  <option>7:00 PM</option>
-                  <option>8:00 PM</option>
-                  <option>9:00 PM</option>
-                  <option>10:00 PM</option>
-                  <option>11:00 PM</option>
-                </select>
+            <!-- <input class="aling-text-center" type="text" placeholder="Team Name"> -->
+            {{ create_team_form }} 
+            <div class="form-group">
+
+
+          </div>
+             <div class="row mt-3">
+              <div class="col-12">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ShiftTimeModal">
+                  Add Shift Time
+                </button>
               </div>
             </div>
           </div>
+
+
+          </div>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-success">Add</button>
-        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+        <div class="modal-footer">
+          <button class="btn btn-success" name="quick_add_team_form">Add</button>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
+        </div>
+      </div>
+<!--       <div class="modal-footer">
+        <button class="btn btn-success">Add</button>
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+      </div> -->
+    </div>
+  </div>
+</div> 
+</form> <!-- end quick add team form -->
 
 <!---Quick add modal-->
 <div class="modal fade" id="add-team-modal" tabindex="-1" aria-labelledby="add-team-modalLabel" aria-hidden="true">
@@ -229,26 +198,53 @@
       
     </div>
   </div>
+<!-- Modal for adding shift time -->
+<div class="modal fade" id="ShiftTimeModal" tabindex="-1" aria-labelledby="ShiftTimeModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ShiftTimeModalLabel">Add Shift Time</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- The shift time form -->
+        <form method="POST" action="#">
+          {% csrf_token %}
+          {{ shift_time_form.as_p }}  
+          <div class="modal-footer">
+            <button type="submit" name="shift_time_form"  class="btn btn-primary">Add Shift Time</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </form> <!-- End ShiftTime form  -->
+      </div>
+    </div>
+  </div>
 </div>
 
-<!-- Bootstrap and Popper.js  Comment out. This template inherits boostrap js and css from baseTwo-->
 
-<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script> -->
-
-
-
-<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script> -->
 
 
 <script>
-  function highlightItem(element) {
-    // Remove 'active-item' class from all sibling buttons
-    const siblings = element.parentNode.querySelectorAll(".list-group-item");
-    siblings.forEach(sibling => sibling.classList.remove("active-item"));
+  document.addEventListener("DOMContentLoaded", function() {
+    // Define the function inside the event listener to ensure it's executed after the DOM is loaded
+    function highlightItem(element) {
+      // Remove 'active-item' class from all sibling buttons
+      const siblings = element.parentNode.querySelectorAll(".list-group-item");
+      siblings.forEach(sibling => sibling.classList.remove("active-item"));
 
-    // Add 'active-item' class to the clicked button
-    element.classList.add("active-item");
-  }
+      // Add 'active-item' class to the clicked button
+      element.classList.add("active-item");
+    }
+
+    // If you need to attach the function to some elements, you can do that here.
+    // For example, you can attach event listeners to buttons that call highlightItem when clicked:
+    const listItems = document.querySelectorAll(".list-group-item");
+    listItems.forEach(item => {
+      item.addEventListener("click", function() {
+        highlightItem(item);
+      });
+    });
+  });
 </script>
 {% endblock %}
 

@@ -1,12 +1,16 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponse
 from datetime import datetime, date
 from django.views import generic
-from django.utils.safestring import mark_safe
-from .models import AttendanceEvent, Associate, Team
+from django.utils.safestring import mark_safe 
+from django.contrib import messages
+from .models import Project, AttendanceEvent, Associate, Team
 
 #utils 
 from tracker.utils import fiscal_calendar_utils as du 
+
+#forms 
+from .forms import CreateTeamForm, ShiftTimeForm
 
 # Create your views here.
 
@@ -29,11 +33,50 @@ def create_attendance_tracker(request):
 def attendance_tracker_view(request, project_pk): 
 	#wireframe 3
 	if request.method == "GET":
-		return render(request, 'attendance_tracker_view.html')
+		project = Project.objects.get(pk=project_pk)
+		teams = Team.objects.filter(project=project) 
+		create_team_form = CreateTeamForm()
+		shift_time_form = ShiftTimeForm()
+		context = {"project":project, "teams":teams, "create_team_form":create_team_form, "shift_time_form":shift_time_form}
+
+		return render(request, 'attendance_tracker_view.html', context)
+
+	if request.method == "POST":
+		project = Project.objects.get(pk=project_pk)
+		if "shift_time_form" in request.POST:
+			shift_time_form = ShiftTimeForm(request.POST)
+			if shift_time_form.is_valid():
+				shift_time_form.save()
+				messages.success(request, "Shift time block created!")
+				return redirect("tracker", project_pk) 
+			else:
+				for error in form.errors:
+					messages.alert(request, error)
+				return redirect("tracker", project_pk) 
+
+
+		if "quick_add_team_form" in request.POST:
+			create_team_form = CreateTeamForm(request.POST)
+			if create_team_form.is_valid():
+				instance = create_team_form.save(commit=False)
+				instance.project = project
+				instance.save()
+				messages.success(request, "Team created!")
+				
+				return redirect("tracker", project_pk) 
+			else:
+				for error in form.errors:
+					messages.alert(request, error)
+				return redirect("tracker", project_pk) 
+
+		return redirect("tracker", project_pk) 
 
 
 
-def team_attendance_view(request): 
+
+
+
+def team_attendance_view(request, project_pk, team_pk): 
 	#wireframe 4
 	if request.method == "GET":
 		return render(request, 'team_attendance_view.html')
@@ -101,10 +144,10 @@ def associate_attendance_view(request):
 		return render(request, 'associate_attendance_view.html', context)
 
 
-def team_headcount_view(request): 
+def team_headcount_view(request, team_pk): 
 	#wireframe 10
 	if request.method == "GET":
-		team = Team.objects.filter(pk=1).first() #hardcode for test
+		team = Team.objects.filter(pk=team_pk).first() #hardcode for test
 		events = AttendanceEvent.objects.all().filter(team=team).order_by("created_at") # all attendance events for this team
 		weeks_to_populate = du.weeks_to_populate(events) #all weeks those attendance events belong to
 		weeks_to_populate = weeks_to_populate[::-1] #reverse slice ensures that the most recent week is populated first. 
@@ -170,7 +213,7 @@ def project_headcount_view(request, project_pk):
 			team_headcount_week.set_average_headcount()
 
 		context = {"weeks_to_populate":weeks_to_populate, "team_headcount_week_dict":team_headcount_week_dict}
-		import pdb; pdb.set_trace()
+
 		return render(request, 'project_headcount_view.html', context) 
 
 

@@ -1,3 +1,7 @@
+a {
+  text-decoration:none;
+}
+
 .stylish-datepicker {
     appearance: none; /* Hide default dropdown arrows */
     -webkit-appearance: none;
