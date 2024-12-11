@@ -45,7 +45,7 @@
               </div>
               <!-- Points Badge -->
               <span class="badge bg-success fs-5 p-2">
-                <i class="bi bi-trophy me-1"></i> 2 Points
+                <i class="bi bi-flag me-1"></i> 2 Points
               </span>
             </div>
             <!-- User Description -->
@@ -56,12 +56,12 @@
             <div class="row row-cols-1 row-cols-md-2 g-3">
               <!-- Each Button Opens a Specific Modal -->
               <div class="col">
-                <button class="btn btn-primary w-100 rounded-pill" data-bs-toggle="modal" data-bs-target="#editTeamModal">
+                <button class="btn btn-outline-primary w-100 rounded-pill" data-bs-toggle="modal" data-bs-target="#editTeamModal">
                   <i class="bi bi-pencil"></i> Edit Team
                 </button>
               </div>
               <div class="col">
-                <button class="btn btn-primary w-100 rounded-pill" data-bs-toggle="modal" data-bs-target="#editAssociateNameModal">
+                <button class="btn btn-outline-primary w-100 rounded-pill" data-bs-toggle="modal" data-bs-target="#editAssociateNameModal">
                   <i class="bi bi-pencil-square"></i> Edit Associate Name
                 </button>
               </div>
@@ -71,27 +71,27 @@
                 </button>
               </div>
               <div class="col">
-                <button class="btn btn-outline-primary w-100 rounded-pill" data-bs-toggle="modal" data-bs-target="#documentDisciplinaryActionModal">
+                <button class="btn btn-outline-danger w-100 rounded-pill" data-bs-toggle="modal" data-bs-target="#documentDisciplinaryActionModal">
                   <i class="bi bi-exclamation-triangle"></i> Document Disciplinary Action
                 </button>
               </div>
               <div class="col">
-                <button class="btn btn-secondary w-100 rounded-pill" data-bs-toggle="modal" data-bs-target="#manuallyAdjustPointsModal">
+                <button class="btn btn-outline-secondary w-100 rounded-pill" data-bs-toggle="modal" data-bs-target="#manuallyAdjustPointsModal">
                   <i class="bi bi-calculator"></i> Manually Adjust Points
                 </button>
               </div>
               <div class="col">
-                <button class="btn btn-secondary w-100 rounded-pill" data-bs-toggle="modal" data-bs-target="#viewAssociateEventTimelineModal">
+                <button class="btn btn-outline-secondary w-100 rounded-pill" data-bs-toggle="modal" data-bs-target="#viewAssociateEventTimelineModal">
                   <i class="bi bi-clock-history"></i> View Associate Event Timeline
                 </button>
               </div>
               <div class="col">
-                <button class="btn btn-warning w-100 rounded-pill" data-bs-toggle="modal" data-bs-target="#flagAlertAssociateModal">
+                <button class="btn btn-outline-warning w-100 rounded-pill" data-bs-toggle="modal" data-bs-target="#flagAlertAssociateModal">
                   <i class="bi bi-flag"></i> Flag/Unflag Alert Associate
                 </button>
               </div>
               <div class="col">
-                <button class="btn btn-danger w-100 rounded-pill" data-bs-toggle="modal" data-bs-target="#flagDARequiredModal">
+                <button class="btn btn-outline-danger w-100 rounded-pill" data-bs-toggle="modal" data-bs-target="#flagDARequiredModal">
                   <i class="bi bi-flag-fill"></i> Flag/Unflag DA Required
                 </button>
               </div>
@@ -137,7 +137,7 @@
             </div>
             <!-- Buttons -->
             <div class="text-end mt-4">
-              <button type="button" class="btn btn-primary px-4 rounded-pill">Save Changes</button>
+              <button type="button" class="btn btn-primary px-4 rounded-pill">Change Associate Teams</button>
               <!-- Cancel Button -->
               <button type="button" class="btn btn-secondary px-4 rounded-pill" data-bs-dismiss="modal">Cancel</button>
             </div>
@@ -152,9 +152,19 @@
   <div class="modal fade" id="editAssociateNameModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
-        <div class="modal-body">
-          <!-- Placeholder content for Edit Associate Name modal -->
-          <p>Edit Associate Name functionality goes here...</p>
+        <!-- Modal Body -->
+        <div class="modal-body p-4">
+          <!-- Form to Edit Associate Name -->
+          <form>
+            <div class="mb-3">
+              <label for="associateName" class="form-label fw-bold">Associate's Name</label>
+              <input type="text" class="form-control" id="associateName" placeholder="Enter the new name">
+            </div>
+            <!-- Save Changes Button -->
+            <div class="text-end">
+              <button type="button" class="btn btn-primary px-4 rounded-pill">Save Changes</button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
@@ -164,9 +174,52 @@
   <div class="modal fade" id="documentCommentsModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
-        <div class="modal-body">
-          <!-- Placeholder content for Document Comments modal -->
-          <p>Document Comments functionality goes here...</p>
+        <!-- Modal Body -->
+        <div class="modal-body p-4">
+          <!-- Text Area for Comment -->
+          <div class="mb-3">
+            <label for="commentText" class="form-label fw-bold">Comment</label>
+            <textarea class="form-control" id="commentText" rows="4" placeholder="Enter your comment here"></textarea>
+          </div>
+          <!-- Dropdown Selectors -->
+          <div class="d-flex justify-content-between mb-3">
+            <!-- Comment Type Selector -->
+            <div class="me-2 w-100">
+              <label for="commentType" class="form-label fw-bold">Comment Type</label>
+              <select class="form-select" id="commentType">
+                <option selected disabled>Select Type</option>
+                <option value="informative">Informative</option>
+                <option value="positive">Positive</option>
+                <option value="coaching">Coaching</option>
+              </select>
+            </div>
+            <!-- Witnessed By Selector -->
+            <div class="me-2 w-100">
+              <label for="witnessedBy" class="form-label fw-bold">Witnessed By</label>
+              <select class="form-select" id="witnessedBy">
+                <option selected disabled>Select Witness</option>
+                <option value="person1">John Doe</option>
+                <option value="person2">Jane Smith</option>
+                <option value="person3">Alice Brown</option>
+                <option value="person4">Bob White</option>
+              </select>
+            </div>
+            <!-- Send To Selector -->
+            <div class="w-100">
+              <label for="sendTo" class="form-label fw-bold">Send To</label>
+              <select class="form-select" id="sendTo">
+                <option selected disabled>Select Recipient</option>
+                <option value="person1">John Doe</option>
+                <option value="person2">Jane Smith</option>
+                <option value="person3">Alice Brown</option>
+                <option value="person4">Bob White</option>
+              </select>
+            </div>
+          </div>
+          <!-- Create Comment Button -->
+          <div class="text-end">
+            <button type="button" class="btn btn-primary px-4 rounded-pill">Create Comment</button>
+          </div>
         </div>
       </div>
     </div>
