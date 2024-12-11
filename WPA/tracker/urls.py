@@ -7,10 +7,11 @@ urlpatterns = [
 
 path('trackers', views.attendance_tracker_overview, name="trackers"),
 path('create', views.create_attendance_tracker, name="create"),
-<<<<<<< HEAD
+
 path('tracker/<int:tracker_pk>', views.attendance_tracker_view, name="tracker"),
 path('tracker/<int:tracker_pk>/team/<uuid:team_pk>', views.team_attendance_view, name="team_attendance"), #TODO take_attendance_view
-path('associates/<int:associate_pk>', views.associate_detail_view, name="associate_detail"),
+#path('associates/<int:associate_pk>', views.associate_detail_view, name="associate_detail"),
+path('associate_detail_view', views.associate_detail_view, name="associate_detail"),
 path('associates/<int:associate_pk>/timeline', views.event_timeline_view, name="timeline"),
 path('tracker/manage_associates', views.manage_associates_view, name="manage_associates"),
 path('alerts', views.user_alerts_view, name="alerts"),
