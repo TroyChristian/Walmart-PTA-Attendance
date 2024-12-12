@@ -81,17 +81,20 @@
                 </button>
               </div>
               <div class="col">
-                <button class="btn btn-outline-secondary w-100 rounded-pill" data-bs-toggle="modal" data-bs-target="#viewAssociateEventTimelineModal">
+                <!-- View Associate Event Timeline as a link -->
+                <a href="#" class="btn btn-outline-secondary w-100 rounded-pill text-decoration-none">
                   <i class="bi bi-clock-history"></i> View Associate Event Timeline
-                </button>
+                </a>
               </div>
               <div class="col">
-                <button class="btn btn-outline-warning w-100 rounded-pill" data-bs-toggle="modal" data-bs-target="#flagAlertAssociateModal">
+                <!-- Flag/Unflag Alert Associate button without modal functionality -->
+                <button class="btn btn-outline-warning w-100 rounded-pill">
                   <i class="bi bi-flag"></i> Flag/Unflag Alert Associate
                 </button>
               </div>
               <div class="col">
-                <button class="btn btn-outline-danger w-100 rounded-pill" data-bs-toggle="modal" data-bs-target="#flagDARequiredModal">
+                <!-- Flag/Unflag DA Required button without modal functionality -->
+                <button class="btn btn-outline-danger w-100 rounded-pill">
                   <i class="bi bi-flag-fill"></i> Flag/Unflag DA Required
                 </button>
               </div>
@@ -119,9 +122,9 @@
                 <label for="teamSelector" class="form-label fw-bold">Change Associate's Team</label>
                 <select class="form-select" id="teamSelector">
                   <option selected disabled>Select a Team</option>
-                  <option value="team1">Team Alpha</option>
-                  <option value="team2">Team Beta</option>
-                  <option value="team3">Team Gamma</option>
+                  <option value="team1">Build and move</option>
+                  <option value="team2">Mods</option>
+                  <option value="team3">Outside</option>
                 </select>
               </div>
               <!-- Select Hours -->
@@ -229,9 +232,45 @@
   <div class="modal fade" id="documentDisciplinaryActionModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
-        <div class="modal-body">
-          <!-- Placeholder content for Document Disciplinary Action modal -->
-          <p>Document Disciplinary Action functionality goes here...</p>
+        <!-- Modal Body -->
+        <div class="modal-body p-4">
+          <!-- Form for Disciplinary Action -->
+          <form>
+            <!-- Text Area for Description -->
+            <div class="mb-3">
+              <label for="disciplinaryDescription" class="form-label fw-bold">Disciplinary Action Description</label>
+              <textarea class="form-control" id="disciplinaryDescription" rows="4" placeholder="Enter details of the disciplinary action"></textarea>
+            </div>
+            <!-- Dropdown Selectors -->
+            <div class="d-flex justify-content-between mb-3">
+              <!-- Witnessed By Selector -->
+              <div class="me-2 w-100">
+                <label for="witnessedByDA" class="form-label fw-bold">Witnessed By</label>
+                <select class="form-select" id="witnessedByDA">
+                  <option selected disabled>Select Witness</option>
+                  <option value="person1">John Doe</option>
+                  <option value="person2">Jane Smith</option>
+                  <option value="person3">Alice Brown</option>
+                  <option value="person4">Bob White</option>
+                </select>
+              </div>
+              <!-- Send To Selector -->
+              <div class="w-100">
+                <label for="sendToDA" class="form-label fw-bold">Send To</label>
+                <select class="form-select" id="sendToDA">
+                  <option selected disabled>Select Recipient</option>
+                  <option value="person1">John Doe</option>
+                  <option value="person2">Jane Smith</option>
+                  <option value="person3">Alice Brown</option>
+                  <option value="person4">Bob White</option>
+                </select>
+              </div>
+            </div>
+            <!-- Document DA Button -->
+            <div class="text-end">
+              <button type="submit" class="btn btn-danger px-4 rounded-pill">Document DA</button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
@@ -241,51 +280,59 @@
   <div class="modal fade" id="manuallyAdjustPointsModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
-        <div class="modal-body">
-          <!-- Placeholder content for Manually Adjust Points modal -->
-          <p>Manually Adjust Points functionality goes here...</p>
+        <div class="modal-body p-4">
+          <!-- Form for Adjusting Points -->
+          <form>
+            <!-- Counter Section -->
+            <div class="mb-3 text-center">
+              <label for="pointsCounter" class="form-label fw-bold">Adjust Points</label>
+              <div class="d-flex justify-content-center align-items-center">
+                <button type="button" class="btn btn-outline-secondary" id="decrementBtn">-</button>
+                <input type="number" class="form-control text-center mx-2" id="pointsCounter" value="0" min="0" style="width: 80px;" readonly>
+                <button type="button" class="btn btn-outline-secondary" id="incrementBtn">+</button>
+              </div>
+            </div>
+            <!-- Reduce Points Button -->
+            <div class="text-end mt-4">
+              <button type="button" class="btn btn-primary px-4 rounded-pill" id="reducePointsBtn">Reduce Points</button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
   </div>
   
-  <!-- View Associate Event Timeline Modal -->
-  <div class="modal fade" id="viewAssociateEventTimelineModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-body">
-          <!-- Placeholder content for View Associate Event Timeline modal -->
-          <p>View Associate Event Timeline functionality goes here...</p>
-        </div>
-      </div>
-    </div>
-  </div>
+
+
+<!-- Script for Counter Functionality -->
+  <script>
+    const decrementBtn = document.getElementById("decrementBtn");
+    const incrementBtn = document.getElementById("incrementBtn");
+    const pointsCounter = document.getElementById("pointsCounter");
+    const reducePointsBtn = document.getElementById("reducePointsBtn");
   
-  <!-- Flag/Unflag Alert Associate Modal -->
-  <div class="modal fade" id="flagAlertAssociateModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-body">
-          <!-- Placeholder content for Flag/Unflag Alert Associate modal -->
-          <p>Flag/Unflag Alert Associate functionality goes here...</p>
-        </div>
-      </div>
-    </div>
-  </div>
+    // Increment Counter
+    incrementBtn.addEventListener("click", () => {
+      pointsCounter.value = parseInt(pointsCounter.value) + 1;
+    });
   
-  <!-- Flag/Unflag DA Required Modal -->
-  <div class="modal fade" id="flagDARequiredModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-body">
-          <!-- Placeholder content for Flag/Unflag DA Required modal -->
-          <p>Flag/Unflag DA Required functionality goes here...</p>
-        </div>
-      </div>
-    </div>
-  </div>
+    // Decrement Counter
+    decrementBtn.addEventListener("click", () => {
+      if (parseInt(pointsCounter.value) > 0) {
+        pointsCounter.value = parseInt(pointsCounter.value) - 1;
+      }
+    });
+  
+    // Set Points to 2
+    reducePointsBtn.addEventListener("click", () => {
+      pointsCounter.value = 2;
+    });
+  </script>
+  
   
   {% endblock %}
+
+
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
