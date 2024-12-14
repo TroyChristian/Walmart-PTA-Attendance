@@ -46,7 +46,7 @@ def associate_detail_view(request):
 def event_timeline_view(request): 
 	#wireframe 6
 	if request.method == "GET":
-		return render(request, 'event_timeline.html')
+		return render(request, 'event_timeline_view.html')
 
 
 

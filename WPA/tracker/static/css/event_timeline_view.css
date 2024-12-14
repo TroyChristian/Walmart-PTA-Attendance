@@ -1,3 +1,57 @@
-p {
-	color:red;
+ /* Floating Timeline Card */
+ .timeline-card {
+  max-width: 800px;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.9); /* Semi-transparent background */
+  border: 1px solid #ddd; /* Border for emphasis */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* Floating shadow effect */
+}
+
+/* Timeline Vertical Line */
+.timeline {
+  border-left: 3px solid #ddd;
+  padding-left: 20px;
+  position: relative;
+}
+
+.timeline-item {
+  position: relative;
+}
+
+.timeline-item::before {
+  content: "";
+  position: absolute;
+  left: -11px;
+  top: 0;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border: 3px solid #ddd;
+  border-radius: 50%;
+}
+
+/* Slide-in panel styling */
+.details-panel {
+  position: fixed;
+  top: 0;
+  right: -400px;
+  height: 100%;
+  width: 300px;
+  background: #f8f9fa;
+  box-shadow: -4px 0 10px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  transition: right 0.3s ease-in-out;
+  z-index: 1050;
+}
+
+.details-panel.open {
+  right: 0;
+}
+
+.details-content {
+  padding: 20px;
+}
+
+.detail.hidden {
+  display: none;
 }
