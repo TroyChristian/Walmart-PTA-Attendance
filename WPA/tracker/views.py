@@ -51,7 +51,7 @@ def event_timeline_view(request):
 
 
 def manage_associates_view(request): 
-	#wireframe 7 
+	#wireframe 7 This view is complete for wireframing 
 	if request.method == "GET":
 		return render(request, 'manage_associates_view.html')
 

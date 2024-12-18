@@ -1,63 +1,54 @@
-.stylish-datepicker {
-    appearance: none; /* Hide default dropdown arrows */
-    -webkit-appearance: none;
-    padding-right: 2.5rem; /* Add space for the custom icon */
-    position: relative;
-  }
-  
-  /* Add hover and focus effects */
-  .stylish-datepicker:hover, .stylish-datepicker:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
-  }
-  
-  /* Custom Dropdown Arrow */
-  .stylish-datepicker::after {
-    content: '\25BC'; /* Unicode for a down arrow */
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
-    font-size: 0.8rem;
-    color: #6c757d;
-  }
-  
-  /* Smooth hover effect for dropdown */
-  .stylish-datepicker::-webkit-calendar-picker-indicator {
-    opacity: 0;
-  }
-  
-  /* Style Input Group Text */
-  .input-group-text:hover {
-    background-color: #0056b3;
-  }
+.search-bar {
+  background: #ffffff;
+  border: 1px solid #ddd;
+}
+.search-bar input {
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
 
-  .card-custom {
-    background-color: #f8f9fa;
-    border-radius: 15px;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-top: 10px;
-  }
-  
-  .counter {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #dc3545; /* Red color to highlight absences */
-  }
-  
-  .team-info {
-    font-size: 1.25rem;
-    color: #6c757d;
-  }
-  
-  .dropdown-menu {
-    min-width: 200px;
-  }
+/* Table Styles */
+.table {
+  border: 1px solid #ddd;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.table th, .table td {
+  vertical-align: middle;
+  text-align: center;
+}
+.table th {
+  font-weight: 600;
+  color: #ffffff;
+  background: #343a40; /* Dark gray for header */
+}
+.table-custom-header {
+  background-color: #6c757d !important; /* Custom header color */
+}
 
+/* Highlighted Text */
+.text-yellow {
+  color: #ffc107; /* Bootstrap yellow */
+  font-weight: bold;
+}
+.text-red {
+  color: #dc3545; /* Bootstrap danger red */
+  font-weight: bold;
+}
 
-  .active-item {
-    background-color: #007bff; /* Highlight color (Bootstrap primary color) */
-    color: white; /* White text on highlight */
-  }
+/* Hover Effect */
+.table-hover tbody tr:hover {
+  background: #f1f1f1; /* Light gray hover */
+}
+
+/* Profile Picture Styling */
+.rounded-circle {
+  border: 2px solid #6c757d; /* Border for profile pictures */
+}
+
+.input-group .btn i {
+  font-size: 1.25rem; /* Make the icon slightly larger */
+  vertical-align: middle; /* Ensure proper alignment */
+} 
