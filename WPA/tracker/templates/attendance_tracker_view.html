@@ -224,28 +224,7 @@
 
 
 
-<!-- <script>
-  document.addEventListener("DOMContentLoaded", function() {
-    // Define the function inside the event listener to ensure it's executed after the DOM is loaded
-    function highlightItem(element) {
-      // Remove 'active-item' class from all sibling buttons
-      const siblings = element.parentNode.querySelectorAll(".list-group-item");
-      siblings.forEach(sibling => sibling.classList.remove("active-item"));
 
-      // Add 'active-item' class to the clicked button
-      element.classList.add("active-item");
-    }
-
-    // If you need to attach the function to some elements, you can do that here.
-    // For example, you can attach event listeners to buttons that call highlightItem when clicked:
-    const listItems = document.querySelectorAll(".list-group-item");
-    listItems.forEach(item => {
-      item.addEventListener("click", function() {
-        highlightItem(item);
-      });
-    });
-  });
-</script> -->
 {% endblock %}
 
 

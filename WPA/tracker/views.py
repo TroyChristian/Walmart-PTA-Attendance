@@ -4,7 +4,7 @@ from datetime import datetime, date
 from django.views import generic
 from django.utils.safestring import mark_safe 
 from django.contrib import messages
-from .models import Project, AttendanceEvent, Associate, Team
+from .models import Project, AttendanceEvent, Associate, Team, ShiftTime
 
 #utils 
 from tracker.utils import fiscal_calendar_utils as du 
@@ -35,18 +35,36 @@ def attendance_tracker_view(request, project_pk):
 	if request.method == "GET":
 		project = Project.objects.get(pk=project_pk)
 		teams = Team.objects.filter(project=project) 
+		shift_times = ShiftTime.objects.none() 
+		for team in teams:
+			shift_times = shift_times | team.shift_time.all()
+
+		# Ensure uniqueness
+		shift_times = shift_times.distinct()  # Removes duplicates across teams
+		if not shift_times:
+			print("No shift times available for teams.")
+
 		#forms
 		create_team_form = CreateTeamForm()
 		shift_time_form = ShiftTimeForm()
 		assoc_form = CreateAssociateForm()
-		assign_team_form = AssignTeamForm()
-		assign_shift_time_form = AssignShiftTimeForm()
+		assign_team_form = AssignTeamForm(project=project)
+		assign_shift_time_form = AssignShiftTimeForm(shift_times=shift_times)
 		context = {"project":project, "teams":teams, "create_team_form":create_team_form, "shift_time_form":shift_time_form, "assoc_form":assoc_form, "assign_team_form":assign_team_form, "assign_shift_time_form":assign_shift_time_form}
 
 		return render(request, 'attendance_tracker_view.html', context)
 
 	if request.method == "POST":
 		project = Project.objects.get(pk=project_pk)
+		teams = Team.objects.filter(project=project) 
+		shift_times = ShiftTime.objects.none() 
+		for team in teams:
+			shift_times = shift_times | team.shift_time.all()
+
+		# Ensure uniqueness
+		shift_times = shift_times.distinct()  # Removes duplicates across teams
+		if not shift_times:
+			print("No shift times available for teams.")
 		if "shift_time_form" in request.POST:
 			shift_time_form = ShiftTimeForm(request.POST)
 			if shift_time_form.is_valid():
@@ -65,6 +83,9 @@ def attendance_tracker_view(request, project_pk):
 				instance = create_team_form.save(commit=False)
 				instance.project = project
 				instance.save()
+				shift_times = create_team_form.cleaned_data['shift_time']  # This will be a list of ShiftTime instances
+				instance.shift_time.set(shift_times)  # Set the ManyToMany field
+				instance.save()
 				messages.success(request, "Team created!")
 				
 				return redirect("tracker", project_pk) 
@@ -76,10 +97,12 @@ def attendance_tracker_view(request, project_pk):
 		
 
 		if "add_associate" in request.POST:
+			
 			assoc_form = CreateAssociateForm(request.POST)
 			assign_team_form = AssignTeamForm(request.POST)
-			assign_shift_time_form = AssignShiftTimeForm(request.POST)
-			import pdb; pdb.set_trace()
+			assign_shift_time_form = AssignShiftTimeForm(request.POST,shift_times=shift_times)
+			
+
 			if assoc_form.is_valid() and assign_team_form.is_valid() and assign_shift_time_form.is_valid():
 				associate = assoc_form.save()  # Save the associate
 				team = assign_team_form.cleaned_data['teams']
@@ -88,15 +111,21 @@ def attendance_tracker_view(request, project_pk):
 				
 				associate.team = team
 				associate.shift_time = shift_time
-				associate.save()
+				associate.save() 
+
+				#If this associate has been granted a time block not currently associated with their team, add this time block to the team
+				if shift_time not in list(team.shift_time.all()):
+					team.shift_time.add(shift_time)
 
 				messages.success(request, "Associate added to project!")
 				return redirect("tracker", project_pk) 
-		else:
-			for error in form.errors:
-				messages.alert(request, error)
-			return redirect("tracker", project_pk) 
+			else:
+				for field, errors in assign_shift_time_form.errors.items():
+					for error in errors:
+						messages.warning(request, f"Error in field {field}: {error}")
 
+				return redirect("tracker", project_pk) 
+	import pdb; pdb.set_trace()
 	return redirect("tracker", project_pk) 
 
 
