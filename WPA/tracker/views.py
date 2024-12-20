@@ -30,7 +30,7 @@ def create_attendance_tracker(request):
 		return render(request, 'create_attendance_tracker.html')
 
 
-def attendance_tracker_view(request, project_pk): 
+def attendance_tracker_view(request, project_pk, date=None): 
 	#wireframe 3
 	if request.method == "GET":
 		project = Project.objects.get(pk=project_pk)
@@ -44,18 +44,40 @@ def attendance_tracker_view(request, project_pk):
 		if not shift_times:
 			print("No shift times available for teams.")
 
+		if not date:
+			date = datetime.today()
+			formatted_date = date.strftime('%b. %d %Y')
+		else:
+			formatted_date = date.strftime('%b. %d %Y') 
+
+		day_of_week = date.strftime("%A")  # Full weekday name (e.g., "Monday")
+		fiscal_week = du.get_walmart_fiscal_year_and_week(date, week_only=True)
+
+
 		#forms
 		create_team_form = CreateTeamForm()
 		shift_time_form = ShiftTimeForm()
 		assoc_form = CreateAssociateForm()
 		assign_team_form = AssignTeamForm(project=project)
 		assign_shift_time_form = AssignShiftTimeForm(shift_times=shift_times)
-		context = {"project":project, "teams":teams, "create_team_form":create_team_form, "shift_time_form":shift_time_form, "assoc_form":assoc_form, "assign_team_form":assign_team_form, "assign_shift_time_form":assign_shift_time_form}
+		context = {"project":project, date:"date", "day_of_week":day_of_week, "fiscal_week":fiscal_week, "formatted_date":formatted_date, "project":project, "teams":teams, "create_team_form":create_team_form, "shift_time_form":shift_time_form, "assoc_form":assoc_form, "assign_team_form":assign_team_form, "assign_shift_time_form":assign_shift_time_form}
 
 		return render(request, 'attendance_tracker_view.html', context)
 
 	if request.method == "POST":
 		project = Project.objects.get(pk=project_pk)
+		if "date" in request.POST:
+			try:
+				selected_date = request.POST.get('date')  # The date from the form
+				formatted_date = datetime.strptime(selected_date, '%Y-%m-%d').date()
+				return redirect('tracker', project_pk=project_pk, date=formatted_date)
+			except ValueError:
+				messages.warning(request, "Failed to fetch the selected date.")
+				return redirect('tracker', project_pk=project.pk)
+
+
+
+		
 		teams = Team.objects.filter(project=project) 
 		shift_times = ShiftTime.objects.none() 
 		for team in teams:
@@ -106,9 +128,11 @@ def attendance_tracker_view(request, project_pk):
 			if assoc_form.is_valid() and assign_team_form.is_valid() and assign_shift_time_form.is_valid():
 				associate = assoc_form.save()  # Save the associate
 				team = assign_team_form.cleaned_data['teams']
-				shift_time = assign_shift_time_form.cleaned_data['shift_time']
+				shift_time = assign_shift_time_form.cleaned_data['shift_time'] 
+				certifications = assoc_form.cleaned_data['certifications']
 
-				
+				if certifications:
+					associate.certifications.add(certifications)  
 				associate.team = team
 				associate.shift_time = shift_time
 				associate.save() 
@@ -125,7 +149,7 @@ def attendance_tracker_view(request, project_pk):
 						messages.warning(request, f"Error in field {field}: {error}")
 
 				return redirect("tracker", project_pk) 
-	import pdb; pdb.set_trace()
+
 	return redirect("tracker", project_pk) 
 
 

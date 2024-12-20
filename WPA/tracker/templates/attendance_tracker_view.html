@@ -38,27 +38,32 @@
     <div class="col-12 d-flex flex-wrap justify-content-start">
       <!-- Child Div 1 -->
       <div class="p-3 me-2 mb-2">
-          <p class="fw-bold">Nov. 19 2024</p>
+          <p class="fw-bold">{{formatted_date}}</p>
       </div>
       <!-- Child Div 2 -->
       <div class="p-3 me-2 mb-2">
-          <p class="fw-bold">Sunday</p>
+          <p class="fw-bold">{{ day_of_week }}</p>
       </div>
       <!-- Child Div 3 -->
       <div class="p-3 me-2 mb-2">
-          <p class="fw-bold">Week 32</p>
+          <p class="fw-bold">Week {{ fiscal_week }}</p>
       </div>
-      <div class="p-3 me-2 mb-2">
+<form id="date-form" method="POST" action="">
+    {% csrf_token %}
+    <div class="p-3 me-2 mb-2">
         <div class="input-group">
-          <span class="input-group-text bg-primary text-white rounded-start">
-            <i class="bi bi-calendar-event"></i>
-          </span>
-          <input 
-            type="date" 
-            class="form-control border-primary shadow-sm rounded-end stylish-datepicker" 
-            id="datepicker-input">
+            <span class="input-group-text bg-primary text-white rounded-start">
+                <i class="bi bi-calendar-event"></i>
+            </span>
+            <input 
+                type="date" 
+                class="form-control border-primary shadow-sm rounded-end stylish-datepicker" 
+                id="datepicker-input" 
+                name="date" 
+                required>
         </div>
-      </div>
+    </div>
+</form>
   </div>
 </div> <!--- date picker ends here--->
 
@@ -181,12 +186,18 @@
             <label for="id_teams" class="form-label">Assign Team</label>
             {{ assign_team_form.teams }}
           </div>
+          <!-- Certification  Assignment -->
+          <div class="mb-3">
+            <label for="id_name" class="form-label">Choose Certifications</label>
+            {{ assoc_form.certifications }}
+          </div>
 
           <!-- Shift Time Assignment -->
           <div class="mb-3">
             <label for="id_shift_time" class="form-label">Assign Shift Time</label>
-            {{ assign_shift_time_form.shift_time}}
+            {{ assign_shift_time_form.shift_time }}
           </div>
+
 
           <!-- Modal Footer -->
           <div class="modal-footer">
@@ -222,7 +233,22 @@
 </div>
 
 
-
+<script>
+  document.getElementById('datepicker-input').addEventListener('change', function() {
+    var selectedDate = this.value;  // Get the selected date as 'YYYY-MM-DD'
+    var projectPk = {{ project.pk }};  // Use your Django project.pk context variable
+    
+    // Construct the URL with the selected date
+    var newUrl = "/tracker/" + projectPk + "/" + selectedDate + "/"; 
+    
+    // Update the form's action to this new URL
+    var form = document.getElementById('date-form');
+    form.action = newUrl;
+    
+    // Submit the form
+    form.submit();
+  });
+</script>
 
 
 {% endblock %}
