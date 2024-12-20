@@ -350,7 +350,10 @@ def get_attendance_event_year_week_walmart_fiscal_calendar(event, week_only=Fals
 
 
 
-
+### Get Day Of Week ###
+def get_day_of_week():
+	"""This should take in a datetime object and return a string representing that dates day of the week"""
+	pass
 
 
 
