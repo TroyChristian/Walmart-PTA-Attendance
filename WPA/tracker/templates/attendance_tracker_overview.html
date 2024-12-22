@@ -1,4 +1,4 @@
-{% extends "baseTwo.html" %}
+{% extends "base.html" %}
 {% load static %}
 
 {% block header %}
@@ -24,7 +24,7 @@
           <i class="bi bi-three-dots-vertical fs-4"></i>
         </button>
         <ul class="dropdown-menu" aria-labelledby="pageDropdown">
-          <li><a class="dropdown-item" href="{% url 'create' %}">Create Project</a></li>
+          <li><a class="dropdown-item" href="#">Create Project</a></li>
           <li><a class="dropdown-item" href="#">Show Completed</a></li>
           <li><a class="dropdown-item" href="#">Show Ongoing Projects</a></li>
           <li><a class="dropdown-item" href="#">Show All Projects</a></li>
@@ -37,7 +37,6 @@
   <div class="projects-container mt-5 container-fluid">
     <div class="row row-cols-1 row-cols-md-3 g-4">
       <div class="col">
-        {% for project in projects %}
         <div class="project card h-100  shadow-sm position-relative">
           <!-- Dropdown ellipses menu -->
           <div class="dropdown position-absolute top-0 end-0 m-2">
@@ -45,25 +44,65 @@
               <i class="bi bi-three-dots-vertical"></i>
             </button>
             <ul class="dropdown-menu" aria-labelledby="cardDropdown">
-              <li><a class="dropdown-item" href="{% url 'project_headcount' project.pk %}">View Project Weekly Headcounts</a></li>
-              <li><a class="dropdown-item text-danger" href="#">Project Options</a></li>
+              <li><a class="dropdown-item" href="#">Create Attendance Tracker</a></li>
+              <li><a class="dropdown-item" href="#">View Details</a></li>
+              <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
             </ul>
           </div>
   
-          <img src="{% static 'images/walmart-blue.png'  %}" class="card-img-top img-fluid" alt="store placeholder img">
+          <img src="{ % static 'images/tracker/static/css/images/walmart-blue.png' % }" class="card-img-top img-fluid" alt="store placeholder img">
           <div class="card-body">
-            <h5 class="card-title fw-bold text-primary"><a href="{% url 'tracker' project.pk %}">Store # {{project.store_number}}</a></h5>
-            <p class="card-text text-muted mb-0">{{ project.address }}</p>
+            <h5 class="card-title fw-bold text-primary"><a href="http://">Store # 0666</a></h5>
+            <p class="card-text text-muted mb-0">3525 US hwy 27 N Sebring FL 33870</p>
           </div>
         </div>
       </div>
-      {% endfor %}
 
+      <div class="col">
+        <div class="project card h-100 shadow-sm  position-relative">
+          <!-- Dropdown ellipses menu -->
+          <div class="dropdown position-absolute top-0 end-0 m-2">
+            <button class="btn btn-link text-muted p-0" type="button" id="cardDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-three-dots-vertical"></i>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="cardDropdown">
+              <li><a class="dropdown-item" href="#">Create Attendance Tracker</a></li>
+              <li><a class="dropdown-item" href="#">View Details</a></li>
+              <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
+            </ul>
+          </div>
+  
+          <img src="{ % static 'images/tracker/static/css/images/walmart-blue.png' % }" class="card-img-top img-fluid" alt="store placeholder img">
+          <div class="card-body">
+            <h5 class="card-title fw-bold text-primary"><a href="http://">Store # 0666</a></h5>
+            <p class="card-text text-muted mb-0">3525 US hwy 27 N Sebring FL 33870</p>
+          </div>
+        </div>
+      </div>
 
+      <div class="col">
+        <div class="project card h-100  shadow-sm  position-relative">
+          <!-- Dropdown ellipses menu -->
+          <div class="dropdown position-absolute top-0 end-0 m-2">
+            <button class="btn btn-link text-muted p-0" type="button" id="cardDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-three-dots-vertical"></i>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="cardDropdown">
+              <li><a class="dropdown-item" href="#">Create Attendance Tracker</a></li>
+              <li><a class="dropdown-item" href="#">View Details</a></li>
+              <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
+            </ul>
+          </div>
+  
+          <img src="{ % static 'images/tracker/static/css/images/walmart-blue.png' % }" class="card-img-top img-fluid" alt="store placeholder img">
+          <div class="card-body">
+            <h5 class="card-title fw-bold text-primary"><a href="http://">Store # 0666</a></h5>
+            <p class="card-text text-muted mb-0">3525 US hwy 27 N Sebring FL 33870</p>
+          </div>
+        </div>
+      </div>
       <!-- Repeat similar structure for other cards -->
     </div>
   </div>
-    <!-- bootstrap js COMMENT THIS OUT TO ALLOW JS FUNCTIONALITY WITH BaseTWO -->
-      <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script> -->
 </body>
 {% endblock %}
