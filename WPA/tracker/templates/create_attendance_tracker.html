@@ -27,21 +27,33 @@
   </div>
 
   <div class="modal fade" id="create-modal" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="modal-title">Would you like to grant other users access to this attendance tracker? Access can be granted later from the project dashboard.</h5>
+          <h5 class="modal-title" id="modal-title">
+            Grant Access and Create a Placeholder
+          </h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+  
         <div class="modal-body">
-          <input type="search" placeholder="Search for users to grant access">
+          <!-- Section for Creating Placeholder -->
+          
+          <h6>Grant Access</h6>
+          <input type="search" class="form-control mb-3" placeholder="Search for users to grant access">
+          <hr class="my-4">
+  
+          <!-- Section for Granting Access -->
+          
           <div class="selected-users">
             <img src="https://via.placeholder.com/40" alt="profile placeholder">
             <p>Mike Steere</p>
           </div>
         </div>
+  
         <div class="modal-footer">
-          <button class="btn btn-success">Grant Access to Attendance Tracker</button>
+          <button class="btn btn-success">Save Changes</button>
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         </div>
       </div>
     </div>
