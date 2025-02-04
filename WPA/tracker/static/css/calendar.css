@@ -1,23 +1,64 @@
-/* Flexbox container for each week */
-.week-container {
-  margin-bottom: 20px;
-}
+  /* General Spacing */
+  .week-container {
+    margin-bottom: 2rem;
+  }
 
-.flex-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-}
+  /* Day Card Design */
+  .calendar-card {
+    background-color: #ffffff; /* Neutral white background for clarity */
+    border: 1px solid #dee2e6; /* Light border for subtle separation */
+    border-radius: 0.75rem; /* Softer corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Gentle shadow for depth */
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    padding: 1rem; /* Better padding for content spacing */
+    height: 100%; /* Ensures uniform height */
+  }
 
-.flex-item {
-  flex: 1 1 100px; /* Flex-grow, flex-shrink, and flex-basis */
-  margin: 5px;
-  padding: 10px;
-  border: 1px solid #ddd;
-  text-align: center;
-}
+  /* On Hover */
+  .calendar-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Slightly stronger shadow */
+    transform: translateY(-5px); /* Minimal upward motion */
+  }
 
-strong {
-  font-size: 18px;
-  margin-bottom: 10px;
-}
+  /* Day Text Styling */
+  .calendar-card h5 {
+    font-size: 1.2rem; /* Slightly larger for better readability */
+    margin-bottom: 0.5rem;
+    color: #343a40; /* Dark text for contrast */
+  }
+
+  /* Event Text Styling */
+  .calendar-card p {
+    font-size: 0.95rem; /* Subtle size for event text */
+    margin: 0; /* Reset margin */
+  }
+  .calendar-card p.text-success {
+    color: #198754; /* Bootstrap green for positive events */
+  }
+  .calendar-card p.text-muted {
+    color: #6c757d; /* Bootstrap muted color */
+  }
+
+  /* Week Header Styling */
+  .week-container h4 {
+    font-size: 1.5rem; /* Large, readable week title */
+    margin-bottom: 1rem; /* Spacing from the content */
+    color: #0d6efd; /* Bootstrap primary blue for emphasis */
+  }
+
+  /* Row and Column Adjustments */
+  .row.g-3 {
+    row-gap: 1.5rem; /* Even spacing between rows */
+  }
+
+  /* Prevent Overflow */
+  .calendar-card:hover {
+    overflow: hidden;
+  }
+
+  /* Responsive Alignment */
+  @media (min-width: 992px) {
+    .calendar-card {
+      padding: 1.5rem; /* More padding on larger screens */
+    }
+  }
