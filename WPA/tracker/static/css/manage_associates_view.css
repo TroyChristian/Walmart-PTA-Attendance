@@ -1,0 +1,26 @@
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f8f9fa;
+}
+
+.search-bar {
+    max-width: 500px;
+    margin: 20px auto;
+}
+
+.table-container {
+    margin-top: 20px;
+}
+
+.profile-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.table thead {
+    background-color: #343a40;
+    color: white;
+}

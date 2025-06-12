@@ -4,7 +4,7 @@ body {
 
 .user-icons img {
     position: relative;
-    margin-left: -30px; /* Adjust overlap */
+    margin-left: -15px; /* Adjust overlap */
     border: 2px solid white; 
     z-index: 1;
 }

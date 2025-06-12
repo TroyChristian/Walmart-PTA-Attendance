@@ -1,0 +1,111 @@
+{% extends "baseTwo.html" %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+{% block header %}    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Associate Points Tracker</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css"> <!-- Ensure this path is correct -->
+
+    <link rel="stylesheet" href="{% static 'css/manage_associates_view.css' %}" />
+</head>
+{% endblock %}
+<body>
+
+    <div class="container">
+        <!-- Search Bar -->
+        <div class="search-bar">
+            <input type="text" class="form-control shadow-sm" placeholder="Search for Associate By Name">
+        </div>
+
+        <!-- Table -->
+        <div class="table-container">
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered align-middle">
+                    <thead>
+                        <tr>
+                            <th>Associate</th>
+                            <th>Group</th>
+                            <th>Total Points</th>
+                            <th>Points Accrued This Month</th>
+                            <th>Previous Month Points Balance</th>
+                            <th>Adjustments</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <img src="https://i.pravatar.cc/40?img=10" alt="John Doe" class="profile-img me-2">
+                                John Doe
+                            </td>
+                            <td>Marketing</td>
+                            <td>12,500</td>
+                            <td>1,200</td>
+                            <td>11,300</td>
+                            <td>-100</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <img src="https://i.pravatar.cc/40?img=12" alt="Jane Smith" class="profile-img me-2">
+                                Jane Smith
+                            </td>
+                            <td>Sales</td>
+                            <td>9,800</td>
+                            <td>950</td>
+                            <td>8,850</td>
+                            <td>+200</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <img src="https://i.pravatar.cc/40?img=15" alt="Alex Johnson" class="profile-img me-2">
+                                Alex Johnson
+                            </td>
+                            <td>HR</td>
+                            <td>7,400</td>
+                            <td>650</td>
+                            <td>6,750</td>
+                            <td>+50</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <img src="https://i.pravatar.cc/40?img=20" alt="Emily Davis" class="profile-img me-2">
+                                Emily Davis
+                            </td>
+                            <td>Finance</td>
+                            <td>14,600</td>
+                            <td>1,500</td>
+                            <td>13,100</td>
+                            <td>-200</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <img src="https://i.pravatar.cc/40?img=25" alt="Michael Brown" class="profile-img me-2">
+                                Michael Brown
+                            </td>
+                            <td>IT</td>
+                            <td>10,200</td>
+                            <td>1,100</td>
+                            <td>9,100</td>
+                            <td>+150</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
